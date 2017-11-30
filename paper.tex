@@ -1,0 +1,40 @@
+\documentclass[format=acmsmall, review=false]{acmart}
+
+\usepackage{acm-ec-17}
+
+\usepackage{booktabs} % For formal tables
+\usepackage[ruled]{algorithm2e} % For algorithms
+\input{preamble}
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+\begin{document}
+% Title portion. Note the short title for running heads 
+\title[Revenue Maximizing Algorithms for Query Pricing]{Revenue Maximization for Query Pricing : Approximation Algorithms and Practical Advances}  
+\author{William Vickrey}
+\affiliation{%
+  \institution{College of William and Mary}}
+\author{Edward Clarke}
+\affiliation{%
+  \institution{University of Virginia}
+}
+\author{Theodore Groves}
+\affiliation{%
+  \institution{Eaton Innovation Center}
+}
+\input{macros}
+\input{abstract}
+\maketitle
+\input{introduction}
+\input{notation}
+\input{querypricing}
+\input{itembundlepricing}
+% Bibliography
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+
+\end{document}

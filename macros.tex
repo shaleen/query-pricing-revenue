@@ -1,0 +1,94 @@
+
+
+\newcommand{\shaleen}[1]{{\color{blue} Shaleen: [{#1}]}}
+\newcommand{\paris}[1]{{\color{SeaGreen} Paris: [{#1}]}}
+\newcommand{\todo}[1]{{\color{red} ToDo: {#1}}}
+\newcommand{\cull}[1]{{\color{red} [{#1}]}}
+\newcommand{\introparagraph}[1]{\textbf{#1.}}   
+\newcommand{\cut}[1]{}
+
+\newenvironment{packed_item}{
+\begin{itemize}
+   \setlength{\itemsep}{1pt}
+   \setlength{\parskip}{0pt}
+   \setlength{\parsep}{0pt}
+}
+{\end{itemize}}
+
+\newenvironment{packed_enum}{
+\begin{enumerate}
+   \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+   \setlength{\parsep}{0pt}
+}
+{\end{enumerate}}
+
+\newenvironment{packed_grep}{
+\begin{description}
+   \setlength{\itemsep}{1pt}
+   \setlength{\parskip}{0pt}
+   \setlength{\parsep}{0pt}
+}
+{\end{description}}
+              
+\newcommand{\ie}{{\em i.e.}\xspace}
+\newcommand{\eg}{{\em e.g.}\xspace}
+\newcommand{\ea}{{\em et al.}\xspace}
+\newcommand{\aka}{{\em a.k.a.}\xspace}
+
+\newcommand{\dtr}[0]{\twoheadrightarrow}     
+ 
+\newcommand{\bQ}[0]{\mathbf{Q}}       
+\newcommand{\bD}[0]{\mathbf{D}}       
+\newcommand{\bR}[0]{\mathbf{R}}       
+\newcommand{\bU}[0]{\mathbf{U}}     
+\newcommand{\bT}[0]{\mathbf{T}}     
+\newcommand{\bA}[0]{\mathbf{A}}     
+\newcommand{\bC}[0]{\mathbf{C}}     
+\newcommand{\bV}[0]{\mathbf{V}}   
+\newcommand{\bG}[0]{\mathbf{G}}     
+ 
+\newcommand{\mS}[0]{\mathcal{S}} 
+\newcommand{\mI}[0]{\mathcal{I}}   
+\newcommand{\mF}[0]{\mathcal{F}}   
+\newcommand{\mH}[0]{\mathcal{H}}   
+\newcommand{\mE}[0]{\mathcal{E}}   
+\newcommand{\mV}[0]{\mathcal{V}}   
+\newcommand{\mC}[0]{\mathcal{C}}      
+\newcommand{\mM}[0]{\mathcal{M}}   
+\newcommand{\mL}[0]{\mathcal{L}}   
+\newcommand{\mP}[0]{\mathcal{P}}   
+
+\newcommand{\APS}[0]{\textsf{APS}}   
+\newcommand{\DPS}[0]{\textsf{DPS}} 
+\newcommand{\QPS}[0]{\textsf{QPS}} 
+
+\newcommand{\agr}[2]{\mS_{#1}(#2)} 
+\newcommand{\dagr}[2]{\overline{\mC}_{#1}(#2)} 
+\newcommand{\setof}[2]{\{{#1}\mid{#2}\}}
+\newcommand{\set}[1]{\{#1\}}   
+
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\db}{\mathscr{D}}%
+\newcommand{\upd}{\textsf{up}^\uparrow}
+
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+
+
+\definecolor{Gray}{gray}{0.9}
+\definecolor{cardinal}{rgb}{0.77, 0.12, 0.23}
+\definecolor{bondiblue}{rgb}{0.0, 0.58, 0.71}
+\definecolor{babyblue}{rgb}{0.54, 0.81, 0.94}
+\definecolor{lightgreen}{rgb}{0.67, 0.94, 0.82}
+\definecolor{maize}{rgb}{0.98, 0.93, 0.37}
+
+%\DeclareRobustCommand{\hlrone}[1]{{\sethlcolor{babyblue}\hl{#1}}}
+%\DeclareRobustCommand{\hlrtwo}[1]{{\sethlcolor{maize}\hl{#1}}}
+%\DeclareRobustCommand{\hlrthree}[1]{{\sethlcolor{lightgreen}\hl{#1}}}
+
+\newcommand{\hlrone}[1]{{\color{black} {#1}}}
+\newcommand{\hlrtwo}[1]{{\color{black} {#1}}}
+\newcommand{\hlrthree}[1]{{\color{black} {#1}}}
+\newcommand{\cmr}[1]{{\color{black} {#1}}}
+

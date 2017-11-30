@@ -1,0 +1,20 @@
+\section{Introduction}
+
+Over the last few years, online data markets have emerged as an increasingly popular way to engage in buying and selling of data. The database community has studied the foundations and defined  pricing models for assigning prices to buyer queries. The most popular pricing model is the {\em query-based pricing}: Users are charged prices based on the queries posed rather than full or partition of the dataset. The main principle identified in these works is that of {\em arbitrage freeness}: It should not be possible for the buyer to acquire a query for a cheaper price by combining information from other query results. More recently, in~\cite{deep2017qirana}, the authors proposed a scalable pricing technique that maintains {\em neighboring databases} of the underlying database $\mathcal{D}$ and assigns to query $Q$ the price $p^{a}(Q,\mathcal{D}) = \sum \limits_{i:Q(D_i) \neq Q(\mathcal{D})} w_i$ where $w_i$ is the weight assigned to neighboring database $D_i$. Howver, even though the pricing function is provably arbitrage free, it does not offer any guarantees on the revenue obtained for the seller. 
+
+In this paper, we resolve the above problem by using game theoretic techniques building on ideas from optimal pricing literature \cite{guruswami2005profit}. The main observation is that each query $Q$ can be viewed as a hyperedge according to the pricing function where the vertices are neighboring database. This is the well known {\em hypergraph vertex pricing} problem that has been studied extensively in item pricing literature. However, existing work gives  approximation algorithms with respect to either sum of valuations as an upper bound or the optimal item pricing solution. The first question we study is the following:
+
+\vspace{1em}
+\textbf{\textit{Question 1.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and: $(i)$ item pricing $(ii)$ uniform bundle pricing, using the pricing function $p^{a}(Q,\mathcal{D})$.
+
+\vspace{1em}
+We show that the gap is $\Omega(m)$ for uniform bundle pricing and this is tight. For item pricing, we show that gap is $\Omega(m)$. Given these results, it is tantalizing to wonder whether XOS pricing functions (rather than single additive function) helps bridge the revenue gap. 
+
+\vspace{1em}
+\textbf{\textit{Question 2.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and XOS pricing function.
+
+\vspace{1em}
+Our main result for the second question is $\dots$.
+
+
+
