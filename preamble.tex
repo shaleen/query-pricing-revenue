@@ -21,6 +21,9 @@
 \usepackage{mdwlist}
 \usepackage{xspace}
 \usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit,shapes,trees,shapes.geometric}
+\usetikzlibrary{patterns,decorations.pathreplacing,calc}
+\usetikzlibrary{arrows}
 %\savesymbol{iint}
 %\usepackage{txfonts}
 %\restoresymbol{TXF}{iint}
@@ -35,4 +38,5 @@
 \usepackage{caption}
 \usepackage{makecell}
 \usepackage{tcolorbox}
-\usepackage{float}                 % Should be included for hyperref according to Google Groups + algorithm + hyperref + float; in fact messes links to algorithms up
+\usepackage{float}                 
+\DeclareMathOperator*{\argmin}{\arg\!\min}
