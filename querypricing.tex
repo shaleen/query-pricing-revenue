@@ -35,7 +35,8 @@ $\mS \subseteq \mI$ be any subset of $\mI$, called the {\em support set}, and de
 \dagr{\mS}{\bQ,\db}  &= \setof{\db' \in \mS}{\bQ(\db) \neq \bQ(\db')}. 
 \end{align*}
 
-Intuitively, the conflict set contains all the database instances from $\mS$ for which the buyer knows that cannot be the underlying instance $\db$ once she learns the answer $\bQ(\db)$. This construction maps each query to the {\em  bundle} $\dagr{\mS}{\bQ,\db} $ over the common itemset $\mS$.
+Intuitively, the conflict set contains all the database instances from $\mS$ for which the buyer knows that cannot be the underlying instance $\db$ once she learns the answer $\bQ(\db)$. This construction maps each query to the {\em  bundle} $\dagr{\mS}{\bQ,\db} $ over the common itemset $\mS$. We should remark here that the task of computing the bundle $\dagr{\mS}{\bQ,\db} $ is computationally feasible if we choose $\mS$ to be small enough, since we can simply iterate through all the items $\db' \in \mS$, and for each item check the condition 
+$\bQ(\db) \neq \bQ(\db')$.
 
 We can now compute a price for $\bQ$ by applying a set function $f: 2^{\mS} \rightarrow  \mathbb{R}_+$ on $\dagr{\mS}{\bQ, \db}$. 
 \hlrone{A set function $f$ is {\em monotone} if for sets $A \subseteq B$ we always have $f(A) \leq f(B)$, and {\em subadditive} if for every set $A,B$ we have $f(A) + f(B) \geq f(A \cup B)$.}
@@ -47,18 +48,28 @@ Let $\mS \subseteq \mI$, and $f$ be a monotone and subadditive set function $f: 
 
 \subsection{Revenue Maximization}
 
-We assume that there are $m$ customers (hyperedges) and $n$ items. Since we are in the {\em unlimited supply setting}, the seller has zero marginal cost  for each item, i.e, the seller can sell any number of units of each item. Additionally, the buyers are  {\em single minded}, which means that each customer is interested in buying only a single set of items corresponding to the hyperedge $e$ for price $v_e$. Buyers will purchase $e$ only if the price assigned to bundle $e$ is at most $v_e$. We will use $p^{b}_e$ and $p^{i}_e$ to denote the bundle and item prices respectively assigned by the algorithm. 
+We now show how the problem of revenue maximization in the query-based pricing framework can be cast in terms of a bundle pricing problem. We consider the unlimited supply setting, where the data seller can sell any number of units of each query. 
+Additionally, we assume that the buyers are single-minded: each buyer is interested in buying only a single query bundle $\bQ$; the buyer will purchase $\bQ$ only if the price $p(\bQ, \db) \leq v_\bQ$, where $v_\bQ$ is the valuation  that the buyer has for $\bQ$. 
+
+The problem setup is as follows. We are given as input a set of $m$ buyers, where each buyer $i$ is interested of purchasing a query bundle $\bQ_i$ with valuation $v_i$. We pick a support set $\mS \subseteq \mI$ of size $n = |\mS|$. By using the transformation of queries to bundles over $\mS$, we can construct a hypergraph $\mH = (\mV,\mE)$, with vertex set $\mV = \mS$, and hyperedges $\mE = \setof{e_i}{i =1, \dots, m}$, where $e_i =\dagr{\mS}{\bQ_i, \db}$.
+The task in hand is to find a set function $p$\footnote{Here we have overloaded $p$ to also be a pricing function with input a bundle of items.} that maximizes the total revenue $\sum_{i=1}^m p(e_i)$, with the restriction that $f$ must be both monotone and subadditive. \paris{should we require that $f$ is a total function?}
+
+For practical applications (e.g., \textsc{Qirana}~\cite{deep2017qirana}), we must only consider functions that can be both concisely represented and also efficiently computable. For example, it is not desirable to come up with a function $p$ where we need to explicitly store all the $2^n$ values for all input bundles from $\mS$.
+For this reason, we focus on a few important subclasses of monotone and subadditive set functions:
+%
+\begin{packed_item}
+\item The {\em uniform bundle price}  $p^b(\cdot)$ assigns the same price to every hyperedge, \ie $p^b(e) = P$ for some number $P \geq 0$.
+%
+\item The {\em additive price} $p^a(\cdot)$ assigns a weight $w_j \geq 0$ to every item $j \in \mS$, and then defines
+$p^a(e) = \sum_{j \in e} w_j$. Such a pricing function is also commonly known as an {\em item pricing}~\cite{}.
+%
+\item The {\em XOS price} $p^x(\cdot)$ defines $k$ weights $w_j^1, w_j^2, \dots, w_j^k$ for each item $j \in \mS$, and then sets the price to $p^x(e) = \max_{i=1}^k \sum_{j \in e} w_j^i$.
+\end{packed_item}
+
+Given the above three subclasses of pricing functions, we answer the following two questions, both from a theoretical and practical point of view.
+First, how much do we lose in terms of revenue by replacing the optimal monotone and subadditive pricing function with one a uniform, additive or XOS price?
+
+ $(i)$ how well can each pricing function approximate the optimal revenue? 
+$(ii)$ can we algorithmically compute the optimal prices, and what approximation guarantees do we obtain? 
 
 
-
-
-\textbf{\textit{Question 1.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and: $(i)$ item pricing $(ii)$ uniform bundle pricing, using the pricing function $p^{a}(Q,\mathcal{D})$.
-
-\vspace{1em}
-We show that the gap is $\Omega(m)$ for uniform bundle pricing and this is tight. For item pricing, we show that gap is $\Omega(m)$. Given these results, it is tantalizing to wonder whether XOS pricing functions (rather than single additive function) helps bridge the revenue gap. 
-
-\vspace{1em}
-\textbf{\textit{Question 2.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and XOS pricing function.
-
-\vspace{1em}
-Our main result for the second question is 
