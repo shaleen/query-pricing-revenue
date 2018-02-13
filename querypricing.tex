@@ -1,6 +1,56 @@
 \section{The Query-Based Pricing Framework}
 \label{sec:framework}
 
+In this section, we present the framework of query-based pricing, and then identify the problems we will tackle in this paper. 
+
+\subsection{Query-Based Pricing Basics}
+
+The {\em data seller} wants to sell a database instance $\db$ through a data market, which functions as the  broker. The instance has a fixed relational schema $\bR = (R_1, \dots, R_k)$ with $k$ relations. We denote by $\mI$ the set of possible database instances. The set $\mI$ encodes information about the data that is provided by the data seller, and is public information known to any buyer (together with the schema). We allow the set $\mI$ to be infinite, but countable. For example, suppose that the schema consists of a single binary relation $R(A,B)$, and the domain of both attributes is $[n] = \set{1, \dots, n}$. Then, $\mI = 2^{[n] \times [n]}$, \ie the set of all directed graphs on the vertex set $[n]$.
+
+{\em Data buyers} can purchase information from the dataset by issuing queries in the form of a {\em query bundle}  $\bQ=\qb{Q_1, \hdots, Q_n}$, which is a vector of queries. For our purposes, a query $Q$ is a deterministic function that takes as input a database instance $\db$ and returns an output $Q(\db)$.  
+We denote the output of the query bundle by $\bQ(\db) = \qb{Q_1(\db), \hdots Q_n(\db)}$. 
+
+A {\em pricing function} $p(\bQ, D)$ takes as input a query bundle $\bQ$ and a database instance $D \in \mI$ and assigns to it a price, which is a number in $ \mathbb{R}_+$. 
+The reason we consider query bundles in our setting is that in practice a data buyer will issue over time a sequence $\bQ_1, \dots, \bQ_m$ of query bundles on the database. In this case, after issuing the first $i$ queries, the data buyer should not be charged a price of $\sum_i p(\bQ_i,D)$, but instead $p(\bQ_1, \dots, \bQ_i, D)$. 
+
+Assigning prices to query bundles without any restrictions can lead to arbitrage opportunities. There are two different conditions where arbitrage may occur:
+
+\introparagraph{Information Arbitrage} The first condition captures the intuition that if a query bundle $\bQ_1$ reveals a subset of information of what a query bundle $\bQ_2$ reveals, then the price of $\bQ_1$ must be less than the price of $\bQ_2$. If this condition is not satisfied, it creates an arbitrage opportunity, since a data buyer can purchase $\bQ_2$ instead, and use it to obtain the answer of $\bQ_1$ for a cheaper price. 
+
+Formally, we say that $\bQ_2$ determines $\bQ_1$ under database $\db$, denoted $\db \vdash \bQ_2 \dtr \bQ_1$ if for every database $\db' \in \mI$ such that $\bQ_2(\db) = \bQ_2(\db')$, we also have  $\bQ_1(\db') = \bQ_1(\db)$.
+We say that the pricing function $p$ has no {\em information arbitrage} if for every database $\db \in \mI$ such that $\db \vdash \bQ_2 \dtr \bQ_1$, we have $p(\bQ_2, \db) \geq  p(\bQ_1, \db)$.
+
+\introparagraph{Bundle Arbitrage} The second condition regards the scenario where a data buyer wants to obtain the answer for the query bundle $\bQ = \bQ_1\Vert \bQ_2$, where $\Vert$ denotes vector concatenation. Instead of asking $\bQ$ as one, the buyer can create two separate accounts, and use one to ask for $\bQ_1$ and the other to ask for $\bQ_2$. To avoid such an arbitrage situation, we must make sure that the price of $\bQ$ is at most the sum of the prices for $\bQ_1$ and  $\bQ_2$. 
+%
+Formally, we say that the price function $p$ has no {\em bundle arbitrage} if for every database $\db \in \mI$, we have $p(\bQ_1\Vert \bQ_2, \db) \leq p(\bQ_1, \db) + p(\bQ_2, \db)$.
+
+We say that the pricing function $p$ is {\em arbitrage-free} if it has no information arbitrage and no bundle arbitrage.
+
+\subsection{From Pricing Queries to Pricing Bundles}
+
+In general, computing whether $\bQ_2$ determines $\bQ_1$ under some database $\db$ is an intractable problem. To overcome this obstacle, we take a different view of a query bundle. Let 
+$\mS \subseteq \mI$ be any subset of $\mI$, called the {\em support set}, and define the {\em conflict set} of $\bQ$ w.r.t. to $\mS$ as:
+%
+\begin{align*}
+\dagr{\mS}{\bQ,\db}  &= \setof{\db' \in \mS}{\bQ(\db) \neq \bQ(\db')}. 
+\end{align*}
+
+Intuitively, the conflict set contains all the database instances from $\mS$ for which the buyer knows that cannot be the underlying instance $\db$ once she learns the answer $\bQ(\db)$. This construction maps each query to the {\em  bundle} $\dagr{\mS}{\bQ,\db} $ over the common itemset $\mS$.
+
+We can now compute a price for $\bQ$ by applying a set function $f: 2^{\mS} \rightarrow  \mathbb{R}_+$ on $\dagr{\mS}{\bQ, \db}$. 
+\hlrone{A set function $f$ is {\em monotone} if for sets $A \subseteq B$ we always have $f(A) \leq f(B)$, and {\em subadditive} if for every set $A,B$ we have $f(A) + f(B) \geq f(A \cup B)$.}
+By choosing $f$ to be monotone and subadditive, we can guarantee that the pricing function is arbitrage-free.
+
+\begin{theorem}[\cite{deep2016design}] \label{cor:arbitrage}
+Let $\mS \subseteq \mI$, and $f$ be a monotone and subadditive set function $f: 2^{\mS} \rightarrow  \mathbb{R}_+$. Then, the function $p(\bQ, \db) = f(\dagr{\mS}{\bQ, \db})$ is arbitrage-free.
+\end{theorem}
+
+\subsection{Revenue Maximization}
+
+We assume that there are $m$ customers (hyperedges) and $n$ items. Since we are in the {\em unlimited supply setting}, the seller has zero marginal cost  for each item, i.e, the seller can sell any number of units of each item. Additionally, the buyers are  {\em single minded}, which means that each customer is interested in buying only a single set of items corresponding to the hyperedge $e$ for price $v_e$. Buyers will purchase $e$ only if the price assigned to bundle $e$ is at most $v_e$. We will use $p^{b}_e$ and $p^{i}_e$ to denote the bundle and item prices respectively assigned by the algorithm. 
+
+
+
 
 \textbf{\textit{Question 1.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and: $(i)$ item pricing $(ii)$ uniform bundle pricing, using the pricing function $p^{a}(Q,\mathcal{D})$.
 
