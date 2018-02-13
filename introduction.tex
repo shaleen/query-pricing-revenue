@@ -1,20 +1,34 @@
 \section{Introduction}
+\label{sec:intro}
 
-Over the last few years, online data markets have emerged as an increasingly popular way to engage in buying and selling of data. The database community has studied the foundations and defined  pricing models for assigning prices to buyer queries. The most popular pricing model is the {\em query-based pricing}: Users are charged prices based on the queries posed rather than full or partition of the dataset. The main principle identified in these works is that of {\em arbitrage freeness}: It should not be possible for the buyer to acquire a query for a cheaper price by combining information from other query results. More recently, in~\cite{deep2017qirana}, the authors proposed a scalable pricing technique that maintains {\em neighboring databases} of the underlying database $\mathcal{D}$ and assigns to query $Q$ the price $p^{a}(Q,\mathcal{D}) = \sum \limits_{i:Q(D_i) \neq Q(\mathcal{D})} w_i$ where $w_i$ is the weight assigned to neighboring database $D_i$. Howver, even though the pricing function is provably arbitrage free, it does not offer any guarantees on the revenue obtained for the seller. 
+The last decade or so has seen an explosion of data being collected from a variety of sources and across a broad range of areas. Many companies, including Bloomberg~\cite{bloomberg}, Twitter~\cite{twitterapi}, Lattice Data~\cite{lattice}, DataFinder~\cite{datafinder}, and Banjo~\cite{banjo} collect such data, which then sell as structured (relational) datasets. 
+These datasets are also often sold through online {\em data markets}, which are web platforms for buying and selling data: examples include BDEX~\cite{bdex}, Salesforce~\cite{salesforce} and QLik DataMarket~\cite{qlik}. Even though data sellers and data markets offer an abundance of data products, the pricing schemes currently used are very simplistic. In most cases, a data buyer has only one option, to buy the whole dataset (or a bundle of datasets) at a fixed price. Alternatively, the dataset is split into multiple disjoint chunks, and each chunk is sold at a separate price. 
 
-In this paper, we resolve the above problem by using game theoretic techniques building on ideas from optimal pricing literature \cite{guruswami2005profit}. The main observation is that each query $Q$ can be viewed as a hyperedge according to the pricing function where the vertices are neighboring database. This is the well known {\em hypergraph vertex pricing} problem that has been studied extensively in item pricing literature. However, existing work gives  approximation algorithms with respect to either sum of valuations as an upper bound or the optimal item pricing solution. The first question we study is the following:
+However, data buyers are commonly interested in extracting specific information from a dataset, and not in acquiring the whole dataset. Accessing this information can be often concisely captured through a {\em query}, or a sequence of queries. Selling the whole dataset to a fixed price forces the buyer to either pay for the query more than it is valued, or to choose to not access it. This means that valuable data is often not accessible to lay users, scientists, or entities with limited budgets, and moreover that data-selling companies and marketplaces behave suboptimally with respect to maximizing their revenue.
 
-\vspace{1em}
-\textbf{\textit{Question 1.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and: $(i)$ item pricing $(ii)$ uniform bundle pricing, using the pricing function $p^{a}(Q,\mathcal{D})$.
+To address this problem, a recent line of research~\cite{KUBHS12,KUBHS13,deep2017qirana} in the database community introduced the framework of  query-based pricing. A {\em query-based pricing scheme} tailors the purchase of the data to the user's needs, by assigning a price to each query issued over the dataset. Given a dataset $\db$ and a query $Q$ over the dataset, the user must pay a price $p(Q,\db)$ to obtain the answer $Q(\db)$ of the query. This price reflects only the value of the information learned by obtaining the query answer, and not the computational cost of executing the query. The work on query-based pricing has mainly focused on how one can define a well-behaved pricing function, and to how to compute it efficiently. In particular, a key property that a pricing function must obey is that of {\em arbitrage freeness}: it should not be possible for the buyer to acquire a query for a cheaper price through the combination of other query results. The arbitrage-free constraint makes the design of appropriate pricing functions a challenging task, especially since deciding whether a query is more informative than another query (or set of queries) is generally a computationally hard problem, and for practical applications it is critical that the price computation can be performed efficiently.
 
-\vspace{1em}
-We show that the gap is $\Omega(m)$ for uniform bundle pricing and this is tight. For item pricing, we show that gap is $\Omega(m)$. Given these results, it is tantalizing to wonder whether XOS pricing functions (rather than single additive function) helps bridge the revenue gap. 
+To overcome this computational barrier, one possible solution proposed in~\cite{deep2017qirana}  is to model each query $Q$ as a {\em bundle} of items $B(Q)$ from a common itemset $I$. Then, the arbitrage-free constraint translates to the requirement that the pricing function must be {\em monotone} and {\em subadditive} when viewed as a set function. Among such set functions, of particular practical interest are the additive and constant functions. An additive function gives to each item $i \in I$  a weight $w_i \geq 0$, and assigns the price $p(Q,\db) = \sum_{i \in B(Q)} w_i$, while a constant function simply assigns the same  price to every query, \ie $p(Q,\db) = p$.
+However, prior work has not answered the fundamental question of how one can choose among the possible set functions (or subclasses of them) the one that maximizes the revenue of the seller. 
 
-\vspace{1em}
-\textbf{\textit{Question 2.}} Given $m$ customers (hyperedges) and their valuations $v_i$, what is the revenue gap between the optimal arbitrage free pricing and XOS pricing function.
+In this paper, we tackle the above question building on ideas from the optimal pricing 
+literature~\cite{guruswami2005profit}. We consider the {\em unlimited supply} setting, where the 
+seller can sell any number of units of each query. This is a natural assumption in the context of a data market,
+since multiple buyers can request and purchase the same query.
+Additionally, we assume that the buyers are {\em single-minded}, so each
+buyer is interested in buying only a single query $Q$ (so a single bundle) for a price of $v_Q$; the buyer will
+purchase the query only if the price $p(Q, \db)$ does not exceed $v_Q$. We focus on the aforementioned two
+types of pricing functions that either assign a uniform price to every query, or perform item pricing. 
+In the case of item pricing, the problem of computing the revenue-maximizing prices can be cast as
+the well-studied {\em hypergraph vertex pricing} problem, where only approximation guarantees are known.
 
-\vspace{1em}
-Our main result for the second question is $\dots$.
+
+
+\paragraph{Our Contribution.}
+
+
+
+
 
 
 
