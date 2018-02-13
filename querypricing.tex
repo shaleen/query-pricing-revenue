@@ -66,10 +66,8 @@ $p^a(e) = \sum_{j \in e} w_j$. Such a pricing function is also commonly known as
 \item The {\em XOS price} $p^x(\cdot)$ defines $k$ weights $w_j^1, w_j^2, \dots, w_j^k$ for each item $j \in \mS$, and then sets the price to $p^x(e) = \max_{i=1}^k \sum_{j \in e} w_j^i$.
 \end{packed_item}
 
-Given the above three subclasses of pricing functions, we answer the following two questions, both from a theoretical and practical point of view.
-First, how much do we lose in terms of revenue by replacing the optimal monotone and subadditive pricing function with one a uniform, additive or XOS price?
-
- $(i)$ how well can each pricing function approximate the optimal revenue? 
-$(ii)$ can we algorithmically compute the optimal prices, and what approximation guarantees do we obtain? 
+Given the above three subclasses of pricing functions, we consider the following two questions, both from a theoretical and practical point of view.
+First, how much do we lose in terms of revenue by replacing the optimal monotone and subadditive pricing function with a uniform, additive or XOS pricing function? In other words, we seek to understand what is the revenue we lose for the sake of computational efficiency.
+Second, we want to develop algorithms that can optimize the prices for each subclass and achieve a good approximation ratio with respect to the optimal revenue.
 
 
