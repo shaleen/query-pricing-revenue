@@ -3,89 +3,105 @@
 
 In this section, we will describe the pricing functions that we consider and the approximation algorithms that can be applied. We will consider two types of pricing schemes in our experiments: $(i)$ uniform bundle pricing; $(ii)$ item pricing. 
 
-\smallskip
-\introparagraph{Uniform Bundle Pricing} In this pricing scheme, the algorithm sells every hyperedge at a fixed price $p'$. Then, if the buyer has valuation $v_e \geq p'$, the hyperedge (and thus, the query corresponding to the hyperedge) can be sold. Uniform bundle pricing is very attractive as a pricing scheme for the following reasons, 
+\subsection{Uniform Bundle Pricing} 
+\label{subsection-uniformbundle}
+
+In this pricing scheme, the algorithm sells every hyperedge at a fixed price $p'$. Then, if the buyer has valuation $v_e \geq p'$, the hyperedge (and thus, the query corresponding to the hyperedge) can be sold. Uniform bundle pricing is very attractive as a pricing scheme for the following reasons, 
 
 \begin{enumerate}
-	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition
-	\item Finding the right fixed price $p'$ can be done in time  $O(|E|^{2})$
-	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge
+	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
+	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
+	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
 \end{enumerate}
 
-However it also has downsides associated with it. First, the pricing scheme is insensitive to the output of the queries (and thus, their information content). Indeed, if all queries are sold at a fixed price, we ignore the actual content of the queries itself \footnote{One can argue that the value of the information content is encoded in the price that customers are willing to pay. This is only true if the buyers know the their valuation function exactly. In general, we want to use pricing functions that are sensitive to the hyperedge structure}. Second, we cannot encode history awareness in the uniform bundle prices. As the buyer purchases more hyperedges over time, we do not want to overcharge the buyer for information that has already been purchased. \shaleen{add an example here}. History awareness is easy to achieve via item pricing but if the pricing function is uniform, we will overcharge the buyer whenever there is overlap between two hyperedges that he/she wants to buy.
+However it also has downsides associated with it. First, the pricing scheme is insensitive to the output of the queries (and thus, their information content). Indeed, if all queries are sold at a fixed price, we ignore the actual content of the queries itself \footnote{One can argue that the value of the information content is encoded in the price that customers are willing to pay. This is only true if the buyers know the their valuation function exactly. In general, we want to use pricing functions that are sensitive to the hyperedge structure}. Second, we cannot encode history awareness in the uniform bundle prices. As the buyer purchases more hyperedges over time, we do not want to overcharge the buyer for information that has already been purchased. 
+%\shaleen{add an example here}. 
+History awareness is easy to achieve via item pricing but if the pricing function is uniform, we will overcharge the buyer whenever there is overlap between two hyperedges that he/she wants to buy.
 
-\begin{algorithm}[!htp]
-	\SetCommentSty{textsf}
-	\DontPrintSemicolon 
-	\SetKwFunction{proc}{\textsf{eval}}
-	\SetKw{KwGoTo}{go to}	
-	\SetKwData{maxsum}{maxrev}
-	\SetKwData{fixedprice}{fixedprice}
-	\SetKwData{sum}{rev}
-	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
-	%
-	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
-	\Output{Uniform price $p$}
-	\BlankLine
-	%
-	$\maxsum \leftarrow 0, \fixedprice \leftarrow 0$ \\
-	\For{$e \in E$}{
-		$p \leftarrow v_e, sum \leftarrow 0$ \\
-			\For{$e \in E$}{
-				\If{$v_e \geq p$}{
-					 $\sum \leftarrow \sum + p$ 
-				 }
-			}
-		\If{$\sum > \maxsum$}{
-			$\maxsum \leftarrow \sum, \fixedprice \leftarrow p$
-		}
-	}
+%\begin{algorithm}[!htp]
+%	\SetCommentSty{textsf}
+%	\DontPrintSemicolon 
+%	\SetKwFunction{proc}{\textsf{eval}}
+%	\SetKw{KwGoTo}{go to}	
+%	\SetKwData{maxsum}{maxrev}
+%	\SetKwData{fixedprice}{fixedprice}
+%	\SetKwData{sum}{rev}
+%	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
+%	%
+%	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
+%	\Output{Uniform price $p$}
+%	\BlankLine
+%	%
+%	$\maxsum \leftarrow 0, \fixedprice \leftarrow 0$ \\
+%	sort edges in $E$ according to $v_e$\\
+%	$n_e \leftarrow \textrm{number of edges }e'\textrm{ with }v_{e'}\geq v_e$
+%	\For{$e \in E$}{
+%		$\sum \leftarrow v_e * n_e$\\
+%		\If{$\sum > \maxsum$}{
+%			$\maxsum \leftarrow \sum, \fixedprice \leftarrow p$
+%		}
+%	}
+%
+%	\KwRet{$\fixedprice$}
+%	\caption{Find revenue maximizing uniform bundle price}
+%	\label{algo:uniformbundleprice}
+%\end{algorithm}
 
-	\KwRet{$\fixedprice$}
-	\caption{Find revenue maximizing uniform bundle price}
-	\label{algo:uniformbundleprice}
-\end{algorithm}
+%Algorithm~\ref{algo:uniformbundleprice} shows how to find the revenue maximizing uniform bundle price which gives an $O(\log |E|)$ approximation %where $v_{\max}, v_{\min}$ are the largest and smallest valuations for any hyperedge respectively.
 
-Algorithm~\ref{algo:uniformbundleprice} shows how to find the revenue maximizing uniform bundle price which gives an $O(\log |E|)$ approximation where $v_{\max}, v_{\min}$ are the largest and smallest valuations for any hyperedge respectively.
+\subsection{Item Pricing} 
 
-\smallskip
-\introparagraph{Item Pricing} In this pricing scheme, the algorithm will assign a weight to each vertex in the hypergraph. Then, the price of any hyperedge $e$ is given by $p(e) = \sum_{v : v \in e} w_v$. Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query.
+In this pricing scheme, the algorithm will assign a weight to each vertex in the hypergraph. Then, the price of any hyperedge $e$ is given by $p(e) = \sum_{v : v \in e} w_v$. Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query. In our experiment, three different item pricing algorithms are implemented.
 
-In our experiments, we use an optimization in $O(\log |V| + \log |E|)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. Once we identify the subset of hyperedges that can be sold, we relax the uniform item pricing requirement and refine the weights by running a linear program. The final item weights are the ones that maximize the revenue. Algorithm~\ref{algo:itempricingbase} shows the detailed steps.
+\subsubsection{An $O(\log |V|+\log |E|)$-approximation algorithm}
 
-The second item pricing algorithm we consider is $O(\log B)$-approximation algorithm given by ~\cite{}. Although this algorithm was presented in the context of item pricing with limited supply, it readily extends to the unlimited supply setting.
+The first item-pricing algorithm we implement is an $O(\log |V| + \log |E|)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
 
-\begin{algorithm}[!htp]
-	\SetCommentSty{textsf}
-	\DontPrintSemicolon 
-	\SetKwFunction{proc}{\textsf{eval}}
-	\SetKw{KwGoTo}{go to}	
-	\SetKwData{maxsum}{maxrev}
-	\SetKwData{fixedprice}{fixedprice}
-	\SetKwData{temp}{temp}	
-	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
-	%
-	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
-	\Output{Item weights $o$}
-	\BlankLine
-	%
-	$\maxsum \leftarrow 0, \fixedprice \leftarrow 0, t$ \\
-	\For{$e \in E$}{
-		$q \leftarrow \frac{v_e}{|E|}, E' = \emptyset, w_v = \langle 0, \dots, 0 \rangle$ \\
-		\For{$e \in E$}{
-			\If{$v_e \geq |E| \cdot q$}{
-				$E' \leftarrow E' \cup e$ 
-			}
-		}
-		
-		$\temp \leftarrow $maximize  $\sum_{e \in E'} w_v \cdot M[e]$ \\
-		subject to \\
-		$w_v \cdot M[e] \leq w_e$ for all $e \in E'$ \\
-		$w_v \geq 0$
-		
-		\If{$\temp > \maxsum$}{$\maxsum \leftarrow \temp, t \leftarrow w_v$}
-	}
-	\KwRet{$t$}
-	\caption{Find revenue maximizing uniform bundle price}
-	\label{algo:itempricingbase}
-\end{algorithm}
+\subsubsection{An $O(\log B)$-approximation algorithm}
+
+The second item pricing algorithm we consider is $O(\log B)$-approximation algorithm given by ~\cite{cheung2008approximation}. Although this primal-dual algorithm was presented in the context of item pricing with limited supply, it readily extends to the unlimited supply setting. The intuition is to set a uniform capacity constraint $k$ and write down the linear program which solves welfare-maximization problem. Then the dual solution are naturally the prices of items such that at least $k$ copies of each item are sold. \cite{cheung2008approximation} proves that
+searching through every possible $k$ and find the optimal item pricing among them would lead to approximation ratio $O(\log B)$.
+
+%\begin{algorithm}[!htp]
+%	\SetCommentSty{textsf}
+%	\DontPrintSemicolon 
+%	\SetKwFunction{proc}{\textsf{eval}}
+%	\SetKw{KwGoTo}{go to}	
+%	\SetKwData{maxsum}{maxrev}
+%	\SetKwData{fixedprice}{fixedprice}
+%	\SetKwData{temp}{temp}	
+%	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
+%	%
+%	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
+%	\Output{Item weights $o$}
+%	\BlankLine
+%	%
+%	$\maxsum \leftarrow 0, \fixedprice \leftarrow 0, t$ \\
+%	\For{$e \in E$}{
+%		$q \leftarrow \frac{v_e}{|E|}, E' = \emptyset, w_v = \langle 0, \dots, 0 \rangle$ \\
+%		\For{$e \in E$}{
+%			\If{$v_e \geq |E| \cdot q$}{
+%				$E' \leftarrow E' \cup e$ 
+%			}
+%		}
+%		
+%		$\temp \leftarrow $maximize  $\sum_{e \in E'} w_v \cdot M[e]$ \\
+%		subject to \\
+%		$w_v \cdot M[e] \leq w_e$ for all $e \in E'$ \\
+%		$w_v \geq 0$
+%		
+%		\If{$\temp > \maxsum$}{$\maxsum \leftarrow \temp, t \leftarrow w_v$}
+%	}
+%	\KwRet{$t$}
+%	\caption{$O(\log B)$-approximation item pricing algorithm}
+%	\label{algo:itempricingbase}
+%\end{algorithm}
+
+\subsubsection{A fast $O(B)$-approximation}
+
+Since the previous algorithm requires solving multiple linear programs and can be extremely slow when the size of input is large, we
+propose the following fast layering algorithm that achieves $O(B)$-approximation in worst case, but much better performance in experiment.
+Each step find a minimal set cover of the remaining items, call the set cover a \textit{layer}.
+On one hand, since each item presents in at most $B$ hyperedges, there are at most $B$ layers. On the other hand, since each set in a minimal
+set cover must contain at least one unique item that is not contained in other sets, pricing these unique items at price equal to the value of corresponding sets can extract full revenue from the hyperedges in this layer. There must exist a layer such that the item pricing can achieve 
+$\Omega(\frac{1}{B})$ of the total value of all the hyperedges, thus this item pricing algorithm has competitive ratio $O(B)$. The running time of the algorithm is $O(B|E|)$ in worst case.
