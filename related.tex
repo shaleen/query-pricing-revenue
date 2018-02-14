@@ -3,8 +3,31 @@
 
 Here goes related work.
 
-1. Query-based pricing.
+(TODO). Query-based pricing.
 
-2. Item pricing: algorithms and lower bounds.
+Revenue-maximizing mechanism has been well understood in single-item auctions, where posted pricing
+mechanism is optimal \cite{myerson1981optimal}. 
+However in general multi-parameter settings, revenue-maximizing mechanisms are considered
+hard to characterize. In the past few decades many researchers started to 
+focus on simple and approximately optimal solutions, especially posted-pricing mechanisms.
+Recently a line of work shows that in Bayesian setting with limited supply, posted pricing achieves 
+constant approximation when there is single buyer 
+\cite{babaioff2014simple, chawla2007algorithmic, 
+chawla2010multi, chawla2015power, rubinstein2015simple},
+and logarithmic approximation (with respect to the number of items) when there are multiple buyers 
+\cite{cai2016duality, chawla2016mechanism, caizhao2017duality}.
 
+The case that our paper focuses on has all valuations of buyers revealed to the seller. This setting
+is initiated by \cite{guruswami2005profit}, which shows that item pricing 
+gives $O(\log n)$-approximation for unit-demand buyers
+in limited-supply setting, and $O(\log n+\log m)$-approximation for single-minded buyers in unlimited supply
+setting. The competitive ratio for unlimited supply setting was improved to $O(\log k + \log B)$ 
+by \cite{briest2006single} then to $O(\log B)$ by \cite{cheung2008approximation} where 
+$k$ denotes the size of largest bundle, and $B$ denotes the maximum number of bundles containing a specific item.
+Another line of work studies how to find best possible item pricing in above setting where $k$ is bounded. Such problem 
+is also known as \textit{k-hypergraph pricing} problem.
+\cite{briest2006single} first gives a polynomial-time algorithm finding an approximately optimal item pricing
+with competitive ratio $k^2$. The approximation ratio is improved to $k$ by \cite{balcan2006approximation},
+which is proven to be near-optimal: under Exponential Time Hypothesis there is no polynomial-time algorithm 
+that achieves competitive ratio $k^{1-\epsilon}$ \cite{chalermsook2013independent}.
 
