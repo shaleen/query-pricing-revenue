@@ -10,7 +10,7 @@ In this pricing scheme, the algorithm sells every hyperedge at a fixed price $p'
 
 \begin{enumerate}
 	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
-	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
+	\item Finding the right fixed price $p'$ can be done in time  $O(m\log m)$;
 	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
 \end{enumerate}
 
@@ -53,9 +53,9 @@ History awareness is easy to achieve via item pricing but if the pricing functio
 
 In this pricing scheme, the algorithm will assign a weight to each vertex in the hypergraph. Then, the price of any hyperedge $e$ is given by $p(e) = \sum_{v : v \in e} w_v$. Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query. In our experiment, three different item pricing algorithms are implemented.
 
-\subsubsection{An $O(\log |V|+\log |E|)$-approximation algorithm}
+\subsubsection{An $O(\log n+\log m)$-approximation algorithm}
 
-The first item-pricing algorithm we implement is an $O(\log |V| + \log |E|)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
+The first item-pricing algorithm we implement is an $O(\log n+\log m)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{m}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
 
 \subsubsection{An $O(\log B)$-approximation algorithm}
 
