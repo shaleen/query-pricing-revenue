@@ -101,7 +101,53 @@ searching through every possible $k$ and find the optimal item pricing among the
 
 Since the previous algorithm requires solving multiple linear programs and can be extremely slow when the size of input is large, we
 propose the following fast layering algorithm that achieves $O(B)$-approximation in worst case, but much better performance in experiment.
-Each step find a minimal set cover of the remaining items, call the set cover a \textit{layer}.
-On one hand, since each item presents in at most $B$ hyperedges, there are at most $B$ layers. On the other hand, since each set in a minimal
-set cover must contain at least one unique item that is not contained in other sets, pricing these unique items at price equal to the value of corresponding sets can extract full revenue from the hyperedges in this layer. There must exist a layer such that the item pricing can achieve 
-$\Omega(\frac{1}{B})$ of the total value of all the hyperedges, thus this item pricing algorithm has competitive ratio $O(B)$. The running time of the algorithm is $O(B|E|)$ in worst case.
+
+\begin{algorithm}[!htp]
+	\SetCommentSty{textsf}
+	\DontPrintSemicolon 
+	\SetKwFunction{proc}{\textsf{eval}}
+	\SetKw{KwGoTo}{go to}	
+	\SetKwData{maxsum}{maxrev}
+	\SetKwData{fixedprice}{fixedprice}
+	\SetKwData{temp}{temp}	
+	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
+	%
+	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
+	\Output{Item pricing $p_i$ for each item $i$}
+	\BlankLine
+	%
+	$Rev \leftarrow 0$, $S\leftarrow \emptyset$, $p_i\leftarrow 0$ for each $i\in V$;\\
+	\While{$E\neq\emptyset$}{
+		Let $E'\subseteq E$ be a minimal set cover of remaining items;\\
+		\If{$\sum_{e\in E'}v_e>Rev$}{
+			$S\leftarrow E'$;\\
+			$Rev\leftarrow \sum_{e\in E'}v_e$;\\
+		}
+		$E\leftarrow E\setminus E'$;
+	}
+	\For{$e\in S$}{
+		Find item $i\in e$ such that $i\not\in e'$, $\forall e'\in S$, $e'\neq e$;\\
+		$p_i\leftarrow v_e$; 
+	}
+	\KwRet{$p$}
+	\caption{$O(B)$-approximation item pricing algorithm}
+	\label{algo:layering}
+\end{algorithm}
+
+The following theorem proves the correctness of Algorithm \ref{algo:layering}, and analyzes its performance.
+
+\begin{theorem}
+\label{thm-Bapprox}
+
+Algorithm \ref{algo:layering} gives a $B$-approximation item pricing in $O(Bm)$ time. 
+
+\end{theorem}
+
+\begin{proof}
+Each step the algorithm finds a minimal set cover of the remaining items, call the set cover a \textit{layer}.
+On one hand, since each item presents in at most $B$ hyperedges, there are at most $B$ layers as at each step the degree of each item decreases by at least 1. On the other hand, each hyperedge $e$ in a minimal
+set cover $E'$ must contain at least one unique item that is not contained in other sets: otherwise $E'\setminus \{e\}$ is still a set cover,
+which contradicts the minimality of $E'$. Pricing these unique items at price equal to the value of corresponding sets can extract full revenue from the hyperedges in this layer. There must exist a layer such that the item pricing can achieve 
+$\Omega(\frac{1}{B})$ of the total value of all the hyperedges, thus this item pricing algorithm has competitive ratio $O(B)$. The running time for each step is $O(m)$, and the total running time is $O(Bm)$.
+
+\end{proof}
