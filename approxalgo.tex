@@ -1,22 +1,33 @@
 \section{Approximation algorithms}
 \label{section-approxalgo}
 
-In this section, we will describe the pricing functions that we consider and the approximation algorithms that can be applied. We will consider two types of pricing schemes in our experiments: $(i)$ uniform bundle pricing; $(ii)$ item pricing. 
+In this section, we present the various approximation algorithms that we consider in our experimental evaluation. We consider algorithms from two subclasses of subadditive and monotone pricing schemes: $(i)$ uniform bundle pricing, and $(ii)$ item (additive) pricing.
 
 \subsection{Uniform Bundle Pricing} 
 \label{subsection-uniformbundle}
 
-In this pricing scheme, the algorithm sells every hyperedge at a fixed price $p'$. Then, if the buyer has valuation $v_e \geq p'$, the hyperedge (and thus, the query corresponding to the hyperedge) can be sold. Uniform bundle pricing is very attractive as a pricing scheme for the following reasons, 
+In uniform bundle pricing, the algorithm sells every hyperedge at a fixed price $P$. Then, if the buyer has valuation $v_e \geq P$, the hyperedge (and thus, the query bundle corresponding to the hyperedge) can be sold. 
+To compute the optimal uniform bundle price $P$, we use a folklore algorithm that we call \ubp . The algorithm first sorts the hyperedges in $\mE$
+in decreasing order of valuation. Then, it makes a linear pass over the ordered valuations, and for every hyperedge $e \in E$ computes the revenue $R_e$ obtained
+if we set the price $P = v_e$. In the end, it outputs $\max_e \{R_e\}$. It is easy to see that the algorithm runs in time $O(m \log m)$, and that it achieves an approximation
+ratio of $O(\log m)$.
 
-\begin{enumerate}
-	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
-	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
-	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
-\end{enumerate}
+%\begin{enumerate}
+%	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
+%	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
+%	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
+%\end{enumerate}
 
-However it also has downsides associated with it. First, the pricing scheme is insensitive to the output of the queries (and thus, their information content). Indeed, if all queries are sold at a fixed price, we ignore the actual content of the queries itself \footnote{One can argue that the value of the information content is encoded in the price that customers are willing to pay. This is only true if the buyers know the their valuation function exactly. In general, we want to use pricing functions that are sensitive to the hyperedge structure}. Second, we cannot encode history awareness in the uniform bundle prices. As the buyer purchases more hyperedges over time, we do not want to overcharge the buyer for information that has already been purchased. 
+Uniform bundle pricing is very attractive as a practical pricing scheme, since it has a single parameter (and thus it has a concise representation), and computing the price of a new query is a trivial task. 
+However, because it is insensitive to the structure of the bundle (and hence the query), it will perform very poorly when the valuations have a large difference across the hyperedges. 
+We should remark here that we expect this to be the case in real-world scenarios: for instance, consider a large table and two queries: one that returns the whole dataset, and one that returns only a single row of the table. Then, it is reasonable to expect that the valuation for these two queries will generally differ by a large margin. 
+
+
+%Indeed, if all queries are sold at a fixed price, we ignore the actual content of the queries itself \footnote{One can argue that the value of the information content is encoded in the price that customers are willing to pay. This is only true if the buyers know the their valuation function exactly. In general, we want to use pricing functions that are sensitive to the hyperedge structure}. 
+
+%Second, we cannot encode history awareness in the uniform bundle prices. As the buyer purchases more hyperedges over time, we do not want to overcharge the buyer for information that has already been purchased. 
 %\shaleen{add an example here}. 
-History awareness is easy to achieve via item pricing but if the pricing function is uniform, we will overcharge the buyer whenever there is overlap between two hyperedges that he/she wants to buy.
+%History awareness is easy to achieve via item pricing but if the pricing function is uniform, we will overcharge the buyer whenever there is overlap between two hyperedges that he/she wants to buy.
 
 %\begin{algorithm}[!htp]
 %	\SetCommentSty{textsf}
@@ -51,7 +62,19 @@ History awareness is easy to achieve via item pricing but if the pricing functio
 
 \subsection{Item Pricing} 
 
-In this pricing scheme, the algorithm will assign a weight to each vertex in the hypergraph. Then, the price of any hyperedge $e$ is given by $p(e) = \sum_{v : v \in e} w_v$. Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query. In our experiment, three different item pricing algorithms are implemented.
+In item pricing, we seek to assign a weight $w_j \geq 0$ to each vertex in the hypergraph. 
+Then, the price of any hyperedge $e$ is given by $p(e) = \sum_{j \in e} w_j$. The representation size of item pricing is $O(n)$, so we can guarantee that it will have a 
+concise representation as long as we pick the support set to be small enough (recall that $n = |\mS|$). Unlike uniform bundle pricing, item pricing can capture large differences between
+the valuation of different queries. On the other hand, we also need to choose a large enough support size, so that we can extract a reasonably good revenue from our pricing
+function. A large support size also guarantees that that new queries that arrive will have
+non-empty hyperedges and hence will not be priced to 0. 
+
+%Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query. 
+
+In our experiments, we evaluate four different item pricing algorithms.
+
+\paragraph{The Uniform Item Pricing (\uip) Algorithm.}
+Our first item pricing algorithm is an $O(\log n + \log m)$-approximation algorithm given by Guruswami et. al~\cite{guruswami2005profit}. \uip\ considers all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices.
 
 \subsubsection{An $O(\log |V|+\log |E|)$-approximation algorithm}
 
