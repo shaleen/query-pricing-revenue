@@ -1,26 +1,10 @@
 \section{Experimental Evaluation}
 
-In this section, we will empirically evaluate the performance of known approximation algorithms for item pricing and bundle pricing. Our goal is to understand the behavior of the algorithms on practical \texttt{SQL} queries over real world datasets. We will first describe our experimental setup, followed by the algorithms that we use and various knobs that we can control to create different instances of the hypergraph instances. 
+In this section, we will empirically evaluate the performance of known approximation algorithms for item pricing and bundle pricing. Our goal is to understand the behavior of the algorithms on practical \texttt{SQL} queries over real world datasets as well as the behavior on random hypergaphs. We will first describe our experimental setup, followed by the various knobs that we can control to create different instances of the hypergraph instances and valuations. 
 
 \subsection{Experimental setup}
 
-We perform all our experiments on $2.2$ GHz processor machine with $4$ cores and $16$ GB main memory running OS X $10.10.5$. We use \texttt{MySQL} as our underlying database for query processing and evaluation. Our implementation is written in \textsc{Python} as an enhancement in \textsc{Qirana} prototype system. \textsc{Qirana} generates random neighbors of a database over which query pricing is performed. The advantage of using neighbors is that we can succinctly represent the neighbor without storing the new database, i.e, we can represent the neighbor by storing only the \emph{update query} that generates the neighbor. \textsc{Qirana} generates two types of neighbors: $(i)$ row update; $(ii)$ swap update. A row update changes one attribute of a single tuple and replaces the attribute value with a different value from the specified domain of the particular attribute. For example,  the following row update modifies the \textsf{User.gender} value of the tuple with key $1$ to f to create a neighboring instance of $D$: 
-
-\begin{center}
-	\texttt{UPDATE User SET gender = ’f ’ WHERE uid = 1;}
-\end{center}
-
-A swap update on the other hand, exchanges the attribute values of $2$ random tuples in a single relation. For example, the following swap update sets
-\textsf{User.age} $= 19$ for the tuple with key $1$ and \textsf{User.age} $= 25$ for
-the tuple with key $4$:
-
-\begin{center}
-\texttt{UPDATE User SET age = 19 WHERE uid = 1;} 
-
-\texttt{UPDATE User SET age = 25 WHERE uid = 4;}
-\end{center}
-
-Both row and swap updates generate a neighboring database that is different from $D$. The set of all neighboring databases is called as the \emph{support set} $\mS$. Observe that any \texttt{SQL} query can be expressed as a subset of $\mS$ and vice-versa. More formally,
+We perform all our experiments on $2.2$ GHz processor machine with $4$ cores and $16$ GB main memory running OS X $10.10.5$. \texttt{MySQL} is used as the underlying database for query processing and evaluation . Our implementation is written in \textsc{Python} as an enhancement in \textsc{Qirana} prototype system. \textsc{Qirana} generates random neighbors of a database as its support set over which query pricing is performed. The advantage of using neighbors is that we can succinctly represent the neighbor without storing the new database, i.e, we can represent the neighbor by storing only the \emph{update query} that generates the neighboring database. Thus, given a query $\bQ$ and support set $\mS$ for database $\db$, \textsc{Qirana} will compute the conflict set of the query. Observe that any \texttt{SQL} query can be expressed as a subset of $\mS$ and vice-versa. More formally,
 
 \begin{proposition}
 	Consider the underlying database $D$ and support set $\mS$. Then,
@@ -30,26 +14,14 @@ Both row and swap updates generate a neighboring database that is different from
 	\end{enumerate} 
 \end{proposition}	
 
-In our framework, given a workload of queries $Q_1, \dots, Q_k$, we define a matrix $M$ of size $k \times |\mS|$ that is initialized as follows, 
-
-\begin{equation}
-M[i][j]=\begin{cases}
-1, & \text{if $Q_i(D) \neq Q_i(D')$ where $D'$ is the $j^{th}$ neighbor in $\mS$}.\\
-0, & \text{otherwise}.
-\end{cases}
-\end{equation}
-
-Thus, each row in matrix $M$ represents the \emph{disagreement} vector for a query $Q_i$ and can be viewed as a hyperedge where the set of vertices is $\mS$. In other words, matrix $M$ represents a hypergraph $H = (V, E)$ where $V = \mS$ and $E = \{ D' \mid M[i][D'] = 1\}$ for each query $Q_i$ in the workload. Additionally, for each query $Q_i$, we are given a valuation $v_i$ that represents the price a customer is willing to pay for the query. Recall that since our customer is a single minded buyer, we can make the sale only if price $p(Q_i) \leq v_i$. In the following, we will use query and hyperedge interchangeably to simplify the exposition. Without loss of generality, we will also assume that every hyperedge has exactly one customer who wants to purchase it. 
-
-%\subsection{Approximation Algorithms}
+We will explore the following design space.
 
 
+\subsection{Experiment Results for SQL Workload}
 
-\subsection{Experiment Results}
+Our first set of experiments is to understand how the approximation algorithms behave on real world queries. The first dataset we use is the $\texttt{\bfseries world}$ dataset, a popular database provided for software developers. It consists of $3$ relations: $\texttt{\bfseries Country}$,$\texttt{\bfseries CountryLanguage}$ and $\texttt{\bfseries City}$ which contain $5000$ tuples and $21$ attributes. We construct a support set of size $15000$ by randomly choosing neighboring databases. The query workload consists of $986$ queries containing selection, projections and join queries with aggregations. We construct the workload by generating changing the predicates in queries. The list of all queries is present in the appendix.
 
-Our first set of experiments is to understand how the approximation algorithms behave on real world queries. The first dataset we use is the $\texttt{\bfseries world}$ dataset, a popular database provided for software developers. It consists of $3$ relations: $\texttt{\bfseries Country}$,$\texttt{\bfseries CountryLanguage}$ and $\texttt{\bfseries City}$ which contain $5000$ tuples and $21$ attributes. We construct a support set of size $15000$ by randomly choosing neighboring databases. The query workload consists of $466$ queries containing selection, projections and join queries with aggregations. We construct the workload by generating changing the predicates in queries. The list of all queries is present in the appendix.
-
-In order to compare different algorithms we use two upper bounds: $(i)$ sum of valuations, and $(ii)$ an upper bound on the optimal subadditive valuation. We find an upper bound on the optimal subadditive valuations by computing a linear program whose constraints encode the bundle arbitrage conditions. Since the number of constraints can be exponential in the number of hyperedges, we optimize by greedily adding constraints for bundles with largest valuations and finding a set of bundles that cover the hyperedge with small valuations. \shaleen{add example}.
+In order to compare different algorithms we use two upper bounds: $(i)$ sum of valuations, and $(ii)$ an upper bound on the optimal subadditive valuation. We find an upper bound on the optimal subadditive valuations by computing a linear program whose constraints encode the bundle arbitrage conditions. Since the number of constraints can be exponential in the number of hyperedges, we optimize by greedily adding constraints for bundles with largest valuations and finding a set of bundles that cover the hyperedge with small valuations. As we will see later, this helps us compare the performance of algorithms with respect to the subadditive bound that can be better than sum of valuations. 
 
 \begin{figure*}[t]
 	
@@ -64,11 +36,14 @@ In order to compare different algorithms we use two upper bounds: $(i)$ sum of v
 	\end{subfigure} 
 	\caption{Sampling valuations from uniform distribution}
 \end{figure*}
+
+\subsubsection{Sampling Bundle Valuations} 
+In this part of the experiment, we will sample valuations for the bundles from a fixed distribution.
+
 \smallskip
-\introparagraph{Sampling from uniform distribution} In our first experiment, we sample valuations from the uniform distribution. Figure~\ref{fig:uniformapprox} shows the performance of all algorithms. The first observation is that uniform bundle pricing outperforms all other algorithms. This is because bundle pricing does not depend on the hyperedge size or structure. For the given query workload, most hyperedges have size between $0$ to $1000$. As we will see later, for bigger sized hyperedges, item pricing performs better.
+\introparagraph{Sampling from uniform distribution} The first experiment samples valuations from the uniform distribution. Figure~\ref{fig:uniformapprox} shows the performance of all algorithms. The first observation is that uniform bundle pricing outperforms all other algorithms and is even better than the subadditive upper bound. This is possible because bundle pricing does not depend on the hyperedge size and can price edges with size zero. On the other hand, $O(\log |V|+\log |E|)$-approximation algorithm does not perform very well since the hypergraph structure is very skewed. Since the valuations for bundles are relatively close to each other, item pricing struggles to generate good prices. As we will see later, when the size of the bundle is correlated with the bundle valuation, item pricing will perform very well.  
 
 \begin{figure*}[t]
-	
 	\begin{subfigure}{0.45\textwidth} 
 		\hspace{-20mm}
 		\includegraphics[scale=0.40]{zipfianallapproxrealworkload.pdf}
@@ -82,5 +57,31 @@ In order to compare different algorithms we use two upper bounds: $(i)$ sum of v
 \end{figure*}
 
 \smallskip
-\introparagraph{Other distributions} Figure~\ref{fig:zipfianapprox} and~\ref{fig:exponentialapprox} perform the same experiment but sample valuation for hyperedges from zipfian and exponential distributions. Uniform bundle pricing is again better than other algorithms and $O(\log B)$-approximation algorithm is marginally better than uniform item pricing LP. Not surprisingly, the layering algorithm does not perform well except in the case of zipfian distribution with exponent smaller than $2$. This is because for $a < 2$, zipfian distribution assigns a large valuation to some hyperedge that contributes significantly to the total revenue. In such cases, the layering algorithm can always extract full revenue from the layer containing high valuation edges and perform well in practice.
+\introparagraph{Other distributions} Figure~\ref{fig:zipfianapprox} and~\ref{fig:exponentialapprox} perform the same experiment but sample valuations for hyperedges from zipfian and exponential distributions. Uniform bundle pricing is again better than other algorithms and $O(\log B)$-approximation algorithm is marginally better than uniform item pricing LP. Not surprisingly, the layering algorithm does not perform well except in the case of zipfian distribution with exponent smaller than $2$. Indeed, for $a < 2$, zipfian distribution assigns a large valuation to some hyperedge that contributes significantly to the total revenue. In such cases, the layering algorithm can always extract full revenue from the layer containing high valuation edges and perform well in practice. As the zipfian exponent becomes greater than two, the spread of valuations becomes smaller and layering algorithm becomes worse. The same behavior is also observed for the exponential distribution. 
 
+\smallskip
+\introparagraph{Scaling bundle valuations} So far, the valuations are sampled independently of the edge size. Our next experiment will correlate the size of the edge with the valuation that is assigned to it. To this end, we will sample valuation from parameterized exponential and normal distribution as follows: we assign $v_e \sim {\rm exponential}(\alpha = |e|^k)$ where $\alpha$ is the mean of the distribution. Similarly, for normal distribution, $v_e \sim \mathcal{N}(\mu = |e|^k,\, \sigma^2 = 10)$. Here $k$ is the parameter that we will vary. Figure[] shows the result for different values of the parameter $k$. For both distributions, when $k \geq 1$, most of the revenue is concentrated in a few edges that have extremely large valuations. In this situation, $O(\log |V| + \log |E|)$-approximation algorithm and uniform bundle pricing perform well. Interestingly, even though $O(\log B)$-approximation runs slow, it performs well since the very first linear program can sell bundles with large valuation. As $k < 1$, the valuations become tend to become more uniform, which in turn decreases the revenue we can extract. We also investigate how XOS pricing functions behave. To define the function, we take the maximum over the best pricing vector generated by the item pricing algorithms. Surprisingly, this does not give good results in our experiments. The last observation is to notice the approximation of uniform item pricing. The optimization of relaxing the uniform item prices via an LP dramatically increases the revenue extracted (sometimes by as much as 5x).
+
+\subsubsection{Sampling Item Prices} The last of set of experiment on the SQL workload is to understand the behavior of algorithms when the valuation of edges is defined by an \emph{additive model}. More specifically, we define $k$ different distributions $\{D_i\}_{i=1}^{k}$ from which items will draw their prices and a special distribution $\tilde{D}$ which will assign each item which distribution it will sample from. The valuation of an edge is the defined as $v_e = \sum_{j \in e} x_j \sim D_{\ell_j}$ where $\ell_j \sim \tilde{D}$. Intuitively, this model will capture the scenario where parts of the database have non-uniform value and some parts are much more valuable than others. To see why this setting can be practical interest, consider a research analyst in banking who gives stock recommendations. While public information about companies and stocks may be cheap, the research analysts buy and sell recommendations will be of much higher value. For the purpose of experiments, we fix $D_i$ to $\textsf{Unif}[i-1, i]$ and set $\tilde{D}$ to $\textsf{Uniform}[1, k]$ or $\textsf{Binomial}(k, 1/2)$ while varying $k$. Figure[] shows the results of this experiment. $O(\log |E| + \log |V|)$-approximation algorithm outperforms all other algorithms. For smaller values of $k$, the valuation of edges are close to additive (and exactly $|e|$ for $k=1$). In this case, there is no gap between uniform item pricing and its LP variant. As  the value of $k$ increases, uniform item pricing does slightly worse than the LP algorithm.
+
+\subsection{Experiment Results for Random Query Workload}
+
+\begin{figure*}[t]
+	\begin{subfigure}{0.45\textwidth} 
+		\hspace{-20mm}
+		\includegraphics[scale=0.40]{histogramhyperedgesizerandomworkload.pdf}
+		\caption{Hyperedge size histogram} \label{fig:randomquerieshistogram}
+	\end{subfigure} 
+	\begin{subfigure}{0.45\textwidth} 
+		\includegraphics[scale=0.40]{uniformrandomqueriesrandomvaluations.pdf}
+		\caption{Sampling valuations from uniform distribution} \label{fig:uniformapproxrandom}
+	\end{subfigure} 
+	\caption{Sampling valuations from uniform distribution}
+\end{figure*}
+
+
+
+In the second set of experiments, we create a workload of randomly chosen selection and projection queries. To generate a random selection query, we  sample without replacement a subset of primary keys that will included in the query. Similarly, for projection queries, we choose a subset of attributes that will form the output. Figure~\ref{fig:randomquerieshistogram} shows the resulting distribution of hyperedge size. For all experiments, we fix the hypergraph generated. 
+
+\smallskip
+\introparagraph{Sampling from uniform distribution} In this experiment, valuations for each edge is chosen from the uniform distribution. Once again, uniform bundle pricing outperforms other approximation algorithms. Because of the high degree of overlap between hyperedges, the layering algorithm does not perform well as the number of levels formed is fairly large and thus, does not give a good approximation.
