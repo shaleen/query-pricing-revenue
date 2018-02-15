@@ -1,11 +1,22 @@
 \section{Related Work}
 \label{sec:related}
 
-Here goes related work.
 
-(TODO). Query-based pricing.
+\paragraph{Query-Based Pricing.}
+There exist various simple mechanisms for data pricing (see~\cite{muschalle2012pricing} for a survey), including a flat fee tariff, usage-based and output-based prices. 
+These pricing schemes do not provide any guarantees against arbitrage.
+%
+The vision for arbitrage-free query-based pricing was first introduced by Balazinska et al.~\cite{balazinska:11b}, and was further developed in a series of papers~\cite{KUBHS12,KUBHS13,KUBHS12b}. The proposed framework requires that the seller sets fine-grained price points, which are prices assigned to a specific type of queries
+over the dataset; these price points are used as a guide to price the incoming queries. 
+Even though the pricing problem in this setting is in general NP-hard, the QueryMarket prototype~\cite{KUBHS13} showed that it is feasible to compute the prices for small datasets, albeit not in real-time. 
 
-Revenue-maximizing mechanism has been well understood in single-item auctions, where posted pricing
+%In \textsc{Qirana}, price points are not a first-class citizen; we can compute fine-grained query prices even when the seller has specified a single price for the whole dataset, by assigning uniform value to every piece of the data. The seller provides price points only when necessary. In contrast, QueryMarket requires the seller to specify very fine-grained price points; even if the seller decides to assign the same equal price to every available price point, this can lead to undesired effects where a particular attribute value that touches most of the data is valued the same as one that touches a small part of the data. Another drawback of QueryMarket w.r.t. the price points is that it is not possible to control the price on an attribute-level, something that \textsc{Qirana} supports.
+
+Further work on data pricing proposed new criteria for interactive pricing in data markets~\cite{LM12}, and described new necessary arbitrage conditions along with several negative results related to the trade-off between flexible pricing and arbitrage avoidance~\cite{LK14}. Upadhyaya et al.~\cite{Upadhyaya2016} investigated history-aware pricing using refunds. More recently, Deep and Koutris~\cite{deep2016design} characterized the possible space of pricing functions with respect to different arbitrage conditions. The theoretical framework was then implemented as part of the \textsc{Qirana} system~\cite{deep2017qirana}, which can support pricing in real-time. The framework we use in this paper for query-based pricing is the same one from~\cite{deep2017qirana}. 
+
+
+\paragraph{Revenue Maximization.}
+Revenue-maximizing mechanisms have been well understood in single-item auctions, where the posted pricing
 mechanism is optimal \cite{myerson1981optimal}. 
 However in general multi-parameter settings, revenue-maximizing mechanisms are considered
 hard to characterize. In the past few decades many researchers started to 
@@ -25,9 +36,9 @@ setting. The competitive ratio for unlimited supply setting was improved to $O(\
 by \cite{briest2006single} then to $O(\log B)$ by \cite{cheung2008approximation} where 
 $k$ denotes the size of largest bundle, and $B$ denotes the maximum number of bundles containing a specific item.
 Another line of work studies how to find best possible item pricing in above setting where $k$ is bounded. Such problem 
-is also known as \textit{k-hypergraph pricing} problem.
+is also known as the \textit{k-hypergraph pricing} problem.
 \cite{briest2006single} first gives a polynomial-time algorithm finding an approximately optimal item pricing
 with competitive ratio $k^2$. The approximation ratio is improved to $k$ by \cite{balcan2006approximation},
-which is proven to be near-optimal: under Exponential Time Hypothesis there is no polynomial-time algorithm 
+which is proven to be near-optimal: under the Exponential Time Hypothesis there is no polynomial-time algorithm 
 that achieves competitive ratio $k^{1-\epsilon}$ \cite{chalermsook2013independent}.
 
