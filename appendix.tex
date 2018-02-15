@@ -172,9 +172,9 @@ The third equality holds since each $\bA_i$ and $\bB_i$ is either an empty set o
 
 Here the third inequality is where we invoke the inductive hypothesis: if $v(A_i)=v(L_i^u)$ or $v(B_i)=v(L_i^u)$, then $v(A_i)+v(B_i)=v(A_i\cup B_i)+v(A_i\cap B_i)$. Otherwise, $v(A_i)$ and $v(B_i)$ are both defined by sets with size at most $2^{u-1}$, by inductive hypothesis $v(A_i)+v(B_i)\geq v(A_i\cup B_i)+v(A_i\cap B_i)$. Thus (\ref{eqnsubmodular}) always holds, which means $v$ is indeed a submodular function.
 
-If we price every bundle at its value, the revenue extracted is maximized. For each level $\ell$, there are $2^{\ell}$ sets and $(2/3)^{\ell} \cdot 3^{t}$ copies of each set. Thus, the total revenue from all $t$ levels is
+If we price every bundle at its value, the revenue extracted is maximized. For each level $\ell$, there are $2^{\ell}$ sets and $(2/3)^{\ell} \cdot 3^{t}$ copies of each set. Thus, the total revenue from all $t+1$ levels is
 \begin{align*}
-	\textsf{OPT} = \sum_{\ell = 0}^{\ell = t} v_\ell c_\ell 2^\ell = \left( \frac{3}{4} \right)^{\ell}  \cdot \left( \frac{4}{3} \right)^{\ell} \cdot  3^{t} = t \cdot 3^{t}.
+	\textsf{OPT} = \sum_{\ell = 0}^{t} v_\ell c_\ell 2^\ell = (t+1)\left( \frac{3}{4} \right)^{\ell}  \cdot \left( \frac{4}{3} \right)^{\ell} \cdot  3^{t} = (t+1) \cdot 3^{t}.
 \end{align*}
 
 %However, it remains to be shown that the third inequality is true, i.e. $v(\bA_i) + v(\bB_i) \geq v(\bA_i \cup \bB_i) + v(\bA_i \cap \bB_i)$. If either $\bA_i = L^{u}_i$ or $\bB_i = L^{u}_i$, then the inequality (equality in this case) holds.
