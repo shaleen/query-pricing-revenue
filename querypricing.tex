@@ -1,16 +1,16 @@
 \section{The Query-Based Pricing Framework}
 \label{sec:framework}
 
-In this section, we present the framework of query-based pricing, and then identify the problems we will tackle in this paper. 
+In this section, we present the framework of query-based pricing, and then formally describe the pricing problems we tackle.
 
 \subsection{Query-Based Pricing Basics}
 
-The {\em data seller} wants to sell a database instance $\db$ through a data market, which functions as the  broker. The instance has a fixed relational schema $\bR = (R_1, \dots, R_k)$ with $k$ relations. We denote by $\mI$ the set of possible database instances. The set $\mI$ encodes information about the data that is provided by the data seller, and is public information known to any buyer (together with the schema). We allow the set $\mI$ to be infinite, but countable. For example, suppose that the schema consists of a single binary relation $R(A,B)$, and the domain of both attributes is $[n] = \set{1, \dots, n}$. Then, $\mI = 2^{[n] \times [n]}$, \ie the set of all directed graphs on the vertex set $[n]$.
+The {\em data seller} wants to sell a database instance $\db$ through a data market, which functions as the broker. The instance has a fixed relational schema $\bR = (R_1, \dots, R_k)$ with $k$ relations. We denote by $\mI$ the set of possible database instances. The set $\mI$ encodes information about the data that is provided by the data seller, and is public information known to any buyer (together with the schema). We allow the set $\mI$ to be infinite, but countable. For example, suppose that the schema consists of a single binary relation $R(A,B)$, and the domain of both attributes is $[n] = \set{1, \dots, n}$. Then, $\mI = 2^{[n] \times [n]}$, \ie the set of all directed graphs on the vertex set $[n]$.
 
 {\em Data buyers} can purchase information from the dataset by issuing queries in the form of a {\em query bundle}  $\bQ=\qb{Q_1, \hdots, Q_n}$, which is a vector of queries. For our purposes, a query $Q$ is a deterministic function that takes as input a database instance $\db$ and returns an output $Q(\db)$.  
 We denote the output of the query bundle by $\bQ(\db) = \qb{Q_1(\db), \hdots Q_n(\db)}$. 
 
-A {\em pricing function} $p(\bQ, D)$ takes as input a query bundle $\bQ$ and a database instance $D \in \mI$ and assigns to it a price, which is a number in $ \mathbb{R}_+$. 
+A {\em pricing function} $p(\bQ, \db)$ takes as input a query bundle $\bQ$ and a database instance $\db \in \mI$ and assigns to it a price, which is a number in $ \mathbb{R}_+$. 
 The reason we consider query bundles in our setting is that in practice a data buyer will issue over time a sequence $\bQ_1, \dots, \bQ_m$ of query bundles on the database. In this case, after issuing the first $i$ queries, the data buyer should not be charged a price of $\sum_i p(\bQ_i,D)$, but instead $p(\bQ_1, \dots, \bQ_i, D)$. 
 
 Assigning prices to query bundles without any restrictions can lead to arbitrage opportunities. There are two different conditions where arbitrage may occur:
@@ -18,13 +18,13 @@ Assigning prices to query bundles without any restrictions can lead to arbitrage
 \introparagraph{Information Arbitrage} The first condition captures the intuition that if a query bundle $\bQ_1$ reveals a subset of information of what a query bundle $\bQ_2$ reveals, then the price of $\bQ_1$ must be less than the price of $\bQ_2$. If this condition is not satisfied, it creates an arbitrage opportunity, since a data buyer can purchase $\bQ_2$ instead, and use it to obtain the answer of $\bQ_1$ for a cheaper price. 
 
 Formally, we say that $\bQ_2$ determines $\bQ_1$ under database $\db$, denoted $\db \vdash \bQ_2 \dtr \bQ_1$ if for every database $\db' \in \mI$ such that $\bQ_2(\db) = \bQ_2(\db')$, we also have  $\bQ_1(\db') = \bQ_1(\db)$.
-We say that the pricing function $p$ has no {\em information arbitrage} if for every database $\db \in \mI$ such that $\db \vdash \bQ_2 \dtr \bQ_1$, we have $p(\bQ_2, \db) \geq  p(\bQ_1, \db)$.
+We say that the pricing function $p$ has no {\em information arbitrage} if for every database $\db \in \mI$ such that $\db \vdash \bQ_2 \dtr \bQ_1$, we have $p(\bQ_2, \db) \geq  p(\bQ_1, \db)$. \todo{example}
 
-\introparagraph{Bundle Arbitrage} The second condition regards the scenario where a data buyer wants to obtain the answer for the query bundle $\bQ = \bQ_1\Vert \bQ_2$, where $\Vert$ denotes vector concatenation. Instead of asking $\bQ$ as one, the buyer can create two separate accounts, and use one to ask for $\bQ_1$ and the other to ask for $\bQ_2$. To avoid such an arbitrage situation, we must make sure that the price of $\bQ$ is at most the sum of the prices for $\bQ_1$ and  $\bQ_2$. 
+\introparagraph{Bundle Arbitrage} The second condition regards the scenario where a data buyer wants to obtain the answer for the query bundle $\bQ = \bQ_1\Vert \bQ_2$, where $\Vert$ denotes vector concatenation. Instead of asking $\bQ$ as one, the buyer can create two separate accounts, and use one to ask for $\bQ_1$ and the other to ask for $\bQ_2$. To avoid such an arbitrage situation, we must make sure that the price of $\bQ$ is at most the sum of the prices for $\bQ_1$ and  $\bQ_2$. \todo{example}
 %
 Formally, we say that the price function $p$ has no {\em bundle arbitrage} if for every database $\db \in \mI$, we have $p(\bQ_1\Vert \bQ_2, \db) \leq p(\bQ_1, \db) + p(\bQ_2, \db)$.
 
-We say that the pricing function $p$ is {\em arbitrage-free} if it has no information arbitrage and no bundle arbitrage.
+We say that the pricing function $p$ is {\em arbitrage-free} if it has no information arbitrage and no bundle arbitrage. 
 
 \subsection{From Pricing Queries to Pricing Bundles}
 
@@ -48,7 +48,7 @@ Let $\mS \subseteq \mI$, and $f$ be a monotone and subadditive set function $f: 
 
 \subsection{Revenue Maximization}
 
-We now show how the problem of revenue maximization in the query-based pricing framework can be cast in terms of a bundle pricing problem. We consider the unlimited supply setting, where the data seller can sell any number of units of each query. 
+We consider the unlimited supply setting, where the data seller can sell any number of units of each query. 
 Additionally, we assume that the buyers are single-minded: each buyer is interested in buying only a single query bundle $\bQ$; the buyer will purchase $\bQ$ only if the price $p(\bQ, \db) \leq v_\bQ$, where $v_\bQ$ is the valuation  that the buyer has for $\bQ$. 
 
 The problem setup is as follows. We are given as input a set of $m$ buyers, where each buyer $i$ is interested of purchasing a query bundle $\bQ_i$ with valuation $v_i$. We pick a support set $\mS \subseteq \mI$ of size $n = |\mS|$. By using the transformation of queries to bundles over $\mS$, we can construct a hypergraph $\mH = (\mV,\mE)$, with vertex set $\mV = \mS$, and hyperedges $\mE = \setof{e_i}{i =1, \dots, m}$, where $e_i =\dagr{\mS}{\bQ_i, \db}$.

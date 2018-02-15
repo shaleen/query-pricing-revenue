@@ -1,7 +1,9 @@
 
 \section{Uniform Bundle and Item Pricing}
 
-In this section, we show our results for uniform bundle and item pricing. Figure~\ref{fig:summary} summarizes the main results. 
+In this section, we provide some theoretical results on how well uniform bundle pricing and item pricing can approximate the 
+optimal subadditive bundle pricing. 
+
 
 
 \begin{figure}[t]
@@ -47,19 +49,22 @@ In this section, we show our results for uniform bundle and item pricing. Figure
 We begin by proving the $O(\log m)$ upper bound with respect to sum of valuations. 
 
 \begin{lemma}
-	Consider a hypergraph $\mH = (\mV, \mE)$ with $m$ edges and valuation $v_e$ for each edge $e \in \mE$. Then, there exists a uniform price $p'$ such that $p^{b}_e = p'$ achieves $O(\log m)$-approximation. 
+	Consider a hypergraph $\mH = (\mV, \mE)$ with $m$ edges and valuation $v_e$ for each edge $e \in \mE$. Then, there exists a uniform price $P$ such that $p^{b}(e) = P$ achieves $O(\log m)$-approximation. 
 \end{lemma}
+
 \begin{proof}
-	Consider the valuations $v_{e_1}, v_{e_2}, \dots, v_{e_m}$ in increasing order. We claim that $ p^{b}_e  = v_{e_{i'}}$ achieves the desired approximation for some edge $e_{i'}$. Assume for the sake of contradiction that this is not the case. Let $\textsf{OPT} = \sum_{e \in \mE} v_e$. Then $m v_{e_1} < \textsf{OPT}/ \log m$ since we can sell each edge if the bundle price is the smallest valuation. Similarly, $(m - i) v_{e_i} < \textsf{OPT}/ \log m$ for each edge. Adding up all inequalities, we get:
+Consider the valuations $v_{e_1}, v_{e_2}, \dots, v_{e_m}$ in increasing order. We claim that $P  = v_{e_j}$ achieves the desired approximation for some edge $e_{j}$. 
+Let $\textsf{OPT} = \sum_{e \in \mE} v_e$. The revenue $R_j$ we obtain by selling at price $v_{e_j}$ is $R_j \geq (m-j)v_{e_j} $. 
+%Then $m v_{e_1} < \textsf{OPT}/ \log m$ since we can sell each edge if the bundle price is the smallest valuation. Similarly, $(m - i) v_{e_i} < \textsf{OPT}/ \log m$ for each edge.
+Adding up all inequalities, we get:
 	
-	\begin{equation}
+	\begin{equation*}
 	\begin{aligned}
-	\textsf{OPT} = \sum_{e \in \mE} v_e & < \frac{\textsf{OPT}}{\log m} (\frac{1}{m} + \frac{1}{m-1} + \dots + 1) \\
-	& \leq \textsf{OPT}
+	\textsf{OPT} = \sum_{j=1}^m v_{e_j} \leq  \sum_{j=1}^m \frac{R_j}{m-j} \leq R \sum_{j=1}^m \frac{1}{j} = R \cdot O(\log m) 
+	%< \frac{\textsf{OPT}}{\log m} (\frac{1}{m} + \frac{1}{m-1} + \dots + 1) \\
+	%& \leq \textsf{OPT}
 	\end{aligned}
-	\end{equation}
-	
-	which is a contradiction.
+	\end{equation*}
 \end{proof}
 
 Next, we show that the $O(\log m)$ upper bound is tight.
