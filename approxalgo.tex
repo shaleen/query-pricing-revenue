@@ -12,19 +12,6 @@ in decreasing order of valuation. Then, it makes a linear pass over the ordered 
 if we set the price $P = v_e$. In the end, it outputs $\max_e \{R_e\}$. It is easy to see that the algorithm runs in time $O(m \log m)$, and that it achieves an approximation
 ratio of $O(\log m)$.
 
-%<<<<<<< HEAD
-%%\begin{enumerate}
-%%	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
-%%	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
-%%	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
-%%\end{enumerate}
-%=======
-%\begin{enumerate}
-%	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
-%	\item Finding the right fixed price $p'$ can be done in time  $O(m\log m)$;
-%	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
-%\end{enumerate}
-%>>>>>>> 04c2b47ff5bb0e9d820bfc9a40703e6fbff29fbd
 
 Uniform bundle pricing is very attractive as a practical pricing scheme, since it has a single parameter (and thus it has a concise representation), and computing the price of a new query is a trivial task. 
 However, because it is insensitive to the structure of the bundle (and hence the query), it will perform very poorly when the valuations have a large difference across the hyperedges. 
@@ -79,20 +66,24 @@ non-empty hyperedges and hence will not be priced to 0.
 
 %Item pricing is a natural fit for the query pricing framework since it allows for maintaining history of query purchases and is sensitive to the information content of the query. However, unlike uniform bundle pricing, we need to ensure that $\mS$ is big enough so that queries have a non-zero hyperedge size. If any query has no disagreement, then item pricing will assign a zero price to the query. 
 
-In our experiments, we evaluate four different item pricing algorithms.
+In our experiments, we evaluate four item pricing algorithms.
 
 \paragraph{The Uniform Item Pricing (\uip) Algorithm.}
-Our first item pricing algorithm is an $O(\log n + \log m)$-approximation algorithm given by Guruswami et. al~\cite{guruswami2005profit}. \uip\ considers all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices.
+Our first item pricing algorithm is an $O(\log n + \log m)$-approximation algorithm given by Guruswami et. al~\cite{guruswami2005profit}. \uip\ outputs a uniform item pricing,
+where every $w_j$ is set to the same value $w$. The algorithm sorts all hyperedges on the value $q_e = \frac{v_e}{|e|}$, computes for every hyperedge $e$  
+the revenue $R_e$ that we can obtain if we set $w_j = q_e$ for every $j \in \mV$, and finally outputs the pricing that gives $\max_e \{ R_e\}$. Its running time is also $O(m \log m)$.
 
-\subsubsection{An $O(\log n+\log m)$-approximation algorithm}
 
-The first item-pricing algorithm we implement is an $O(\log n+\log m)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{m}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
+\paragraph{The LP Item Pricing (\lpip) Algorithm.}
 
-\subsubsection{An $O(\log B)$-approximation algorithm}
+The second item pricing algorithm we consider builds upon the \uip\ algorithm to construct a non-uniform item pricing. \lpip\ constructs a separate linear program $LP(e)$ for every hyperedge $e \in \mE$ as follows. Let $F_e \subseteq \mE$ be the set of hyperedges $e'$ such that $v_{e'} \geq v_e$. Then, $LP(e)$ has the objective of maximizing the revenue,
+with the constraint that every edge in $F_e$ must be sold: in other words, for every $e' \in F_e$, we must have $\sum_{j \in e'} w_j \leq v_{e'}$. Observe that the uniform item pricing
+solution that sets each weight $w_j$ to $v_e$ is a feasible solution for $LP(e)$, so the output of the linear program can only give a better item pricing. \lpip\ outputs the revenue-maximizing solution across all $LP(e)$. The worst-case approximation guarantee of \lpip\ is also $O(\log m)$; however, as we will see in the experimental section, it often outperforms \uip.
 
-The second item pricing algorithm we consider is $O(\log B)$-approximation algorithm given by ~\cite{cheung2008approximation}. Although this primal-dual algorithm was presented in the context of item pricing with limited supply, it readily extends to the unlimited supply setting. The intuition is to set a uniform capacity constraint $k$ and write down the linear program which solves welfare-maximization problem. Then the dual solution are naturally the prices of items such that at least $k$ copies of each item are sold. \cite{cheung2008approximation} proves that
-searching through every possible $k$ and find the optimal item pricing among them would lead to approximation ratio $O(\log B)$.
-
+\paragraph{The Capacity Item Pricing (\cip) Algorithm.}
+This algorithm is an $O(\log B)$-approximation algorithm given by ~\cite{cheung2008approximation}.
+Although this primal-dual algorithm was presented in the context of item pricing with limited supply, it readily extends to the unlimited supply setting. Intuitively, \cip\ sets a uniform capacity constraint $k$ on how many times each item (vertex) can be sold, and for that $k$ solves a linear program that optimizes for the welfare-maximization problem.  The dual solution of this LP gives the prices of items such that at least $k$ copies of each item are sold. \cite{cheung2008approximation} proves that if we search through the possible capacity constraint using a step-size of $(1+\epsilon)$ -- so $k = 1, (1+\epsilon), (1+\epsilon)^2, \dots$ -- then the revenue-maximizing item pricing across all $k$'s achieves an approximation ratio of $O((1+\epsilon) \log B)$.
+ 
 %\begin{algorithm}[!htp]
 %	\SetCommentSty{textsf}
 %	\DontPrintSemicolon 
@@ -128,10 +119,10 @@ searching through every possible $k$ and find the optimal item pricing among the
 %	\label{algo:itempricingbase}
 %\end{algorithm}
 
-\subsubsection{A fast $O(B)$-approximation}
-
-Since the previous algorithm requires solving multiple linear programs and can be extremely slow when the size of input is large, we
-propose the following fast layering algorithm that achieves $O(B)$-approximation in worst case, but much better performance in experiment.
+\paragraph{The Layering Algorithm}
+Since the previous algorithms require solving multiple linear programs, they can be slow when the size of input is large.  We thus also
+consider a fast greedy algorithm that achieves an $O(B)$-approximation in the worst case (but as we will see, a much better approximation
+in practice).
 
 \begin{algorithm}[!htp]
 	\SetCommentSty{textsf}
@@ -143,25 +134,25 @@ propose the following fast layering algorithm that achieves $O(B)$-approximation
 	\SetKwData{temp}{temp}	
 	\SetKwInOut{Input}{\textsc{input}}\SetKwInOut{Output}{\textsc{output}}
 	%
-	\Input{Hypergraph $H = (V, E)$ and valuation $v_e, e \in E$}
-	\Output{Item pricing $p_i$ for each item $i$}
+	\Input{Hypergraph $\mH = (\mV, \mE)$ and valuation $\{ v_e\}_{e \in \mE}$}
+	\Output{Item pricing $w_j$ for each item $j \in \mV$}
 	\BlankLine
 	%
-	$Rev \leftarrow 0$, $S\leftarrow \emptyset$, $p_i\leftarrow 0$ for each $i\in V$;\\
-	\While{$E\neq\emptyset$}{
-		Let $E'\subseteq E$ be a minimal set cover of remaining items;\\
-		\If{$\sum_{e\in E'}v_e>Rev$}{
-			$S\leftarrow E'$;\\
-			$Rev\leftarrow \sum_{e\in E'}v_e$;\\
+	$Rev \leftarrow 0$, $S\leftarrow \emptyset$, $w_j \leftarrow 0$ for each $j \in \mV$;\\
+	\While{$\mE \neq \emptyset$}{
+		Let $\mE'\subseteq \mE$ be a minimal set cover of the items in $\bigcup_{e \in \mE} e$;\\
+		\If{$\sum_{e\in \mE'}v_e>Rev$}{
+			$S\leftarrow \mE'$;\\
+			$Rev\leftarrow \sum_{e\in \mE'}v_e$;\\
 		}
-		$E\leftarrow E\setminus E'$;
+		$\mE\leftarrow \mE \setminus \mE'$;
 	}
 	\For{$e\in S$}{
-		Find item $i\in e$ such that $i\not\in e'$, $\forall e'\in S$, $e'\neq e$;\\
-		$p_i\leftarrow v_e$; 
+		Find item $j \in e$ such that $j \not\in e'$, $\forall e'\in S$, $e'\neq e$;\\
+		$w_j \leftarrow v_e$; 
 	}
-	\KwRet{$p$}
-	\caption{$O(B)$-approximation item pricing algorithm}
+	\KwRet{$\{w_j\}_{j \in \mV}$}
+	\caption{The Layering Algorithm}
 	\label{algo:layering}
 \end{algorithm}
 
@@ -170,15 +161,14 @@ The following theorem proves the correctness of Algorithm \ref{algo:layering}, a
 \begin{theorem}
 \label{thm-Bapprox}
 
-Algorithm \ref{algo:layering} gives a $B$-approximation item pricing in $O(Bm)$ time. 
+Algorithm~\ref{algo:layering} outputs a $B$-approximation item pricing in $O(Bm)$ time. 
 
 \end{theorem}
 
 \begin{proof}
 Each step the algorithm finds a minimal set cover of the remaining items, call the set cover a \textit{layer}.
 On one hand, since each item presents in at most $B$ hyperedges, there are at most $B$ layers as at each step the degree of each item decreases by at least 1. On the other hand, each hyperedge $e$ in a minimal
-set cover $E'$ must contain at least one unique item that is not contained in other sets: otherwise $E'\setminus \{e\}$ is still a set cover,
-which contradicts the minimality of $E'$. Pricing these unique items at price equal to the value of corresponding sets can extract full revenue from the hyperedges in this layer. There must exist a layer such that the item pricing can achieve 
-$\Omega(\frac{1}{B})$ of the total value of all the hyperedges, thus this item pricing algorithm has competitive ratio $O(B)$. The running time for each step is $O(m)$, and the total running time is $O(Bm)$.
-
+set cover $\mE'$ must contain at least one unique item that is not contained in other sets: otherwise $\mE'\setminus \{e\}$ is still a set cover,
+which contradicts the minimality of $\mE'$. Pricing these unique items at price equal to the value of corresponding sets can extract full revenue from the hyperedges in this layer. There must exist a layer such that the item pricing can achieve 
+$\Omega(\frac{1}{B})$ of the total value of all the hyperedges, thus this item pricing algorithm has approximation ratio $O(B)$. The running time for each step is $O(m)$, and the total running time is $O(Bm)$.
 \end{proof}
