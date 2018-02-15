@@ -1,8 +1,9 @@
 
 \section{Uniform Bundle and Item Pricing}
 
-In this section, we provide some worst-case guarantees on how well uniform bundle pricing and item pricing can approximate the 
-optimal subadditive and monotone bundle pricing. 
+In this section, we present a brief discussion for worst-case guarantees on how well uniform bundle pricing and item pricing can approximate the 
+optimal subadditive and monotone bundle pricing. Figure~\ref{fig:summary} summarizes the upper and lower bounds that are either known,
+or we obtain in this paper.
 
 
 \begin{figure}[t]
@@ -46,17 +47,20 @@ optimal subadditive and monotone bundle pricing.
 \paragraph{Upper Bounds.}
 It is a folklore result that for any hypergraph $\mH = (\mV, \mE)$ with valuations $\{v_e\}_{e \in \mE}$, one can always construct a uniform bundle price that is $O(\log m)$ away from
 the sum of valuations $\sum_e v_e$, which is an upper bound on the optimal subadditive and monotone bundle pricing (for completeness, we provide a proof in Appendix~\ref{sec:appendix}). Similarly, we know from~\cite{cheung2008approximation} that item pricing can achieve a $O(\log B)$ approximation of the sum of valuations. Recall that 
-$B$ is the maximum number of hyperedges that a vertex can be contained in, and hence $B \leq m$. 
+$B$ is the maximum number of hyperedges that any vertex can be contained in, and hence $B \leq m$. 
 
 \paragraph{Lower Bounds.}
-The upper bound of $O(\log m)$ is tight in the worst case for both uniform item pricing and bundle pricing. In particular, we show the following stronger results:
+Not surprisingly, the upper bound of $O(\log m)$ is tight in the worst case for both uniform item pricing and bundle pricing. In particular, we show the following stronger results:
 %
 \begin{enumerate}
 \item There exists a hypergraph instance with additive valuations where any uniform bundle price produces revenue that is $\Omega(\log m)$ away from the optimal (Lemma~\ref{lem:lb1} in the appendix).
 \item There exists a hypergraph instance with uniform valuations (\ie, each buyer has the same valuation for any hyperedge) where any item pricing produces revenue that is $\Omega(\log m)$ away from the optimal (Lemma~\ref{lem:lb2} in the appendix).
 \item There exists a hypergraph instance with submodular valuations where any item pricing {\em and} any uniform bundle pricing is  $\Omega(\log m)$ away from the optimal (Lemma~\ref{lem:lb3} in the appendix).
 \end{enumerate} 
- 
+
+The above lower bounds tell us that there are problem instances where uniform bundle pricing will be optimal, but item pricing will behave poorly, and vice versa. Moreover, there are instances where both subclasses of pricing functions will not perform well with respect to a submodular monotone function (which is a subset of subadditive and monotone bundle pricing).
+ A straightforward corollary of the lower bound of Lemma~\ref{lem:lb3} is that even an XOS pricing function that combines a constant number $k$ of item pricing functions suffers from the 
+ $\Omega(\log m)$ revenue gap. An open question that remains is whether an XOS pricing with larger $k$ can obtain a better approximation guarantee with respect to the optimal subadditive and monotone bundle pricing.
 
 
 
