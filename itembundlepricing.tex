@@ -1,9 +1,8 @@
 
 \section{Uniform Bundle and Item Pricing}
 
-In this section, we provide some theoretical results on how well uniform bundle pricing and item pricing can approximate the 
-optimal subadditive bundle pricing. 
-
+In this section, we provide some worst-case guarantees on how well uniform bundle pricing and item pricing can approximate the 
+optimal subadditive and monotone bundle pricing. 
 
 
 \begin{figure}[t]
@@ -46,34 +45,37 @@ optimal subadditive bundle pricing.
 
 \subsection{Uniform Bundle Pricing}
 
-We begin by proving the $O(\log m)$ upper bound with respect to sum of valuations. 
+We show that $(i)$ there exists a uniform bundle price that is $O(\log m)$ away from the optimal subadditive and monotone bundle pricing (and in particular, the sum of valuations), and
+$(ii)$ the $O(\log m)$ bound is tight.
 
 \begin{lemma}
-	Consider a hypergraph $\mH = (\mV, \mE)$ with $m$ edges and valuation $v_e$ for each edge $e \in \mE$. Then, there exists a uniform price $P$ such that $p^{b}(e) = P$ achieves $O(\log m)$-approximation. 
+Consider a hypergraph $\mH = (\mV, \mE)$ with valuations $\{v_e\}_{e \in \mE}$. Then, there exists a uniform bundle price $p^{b}$ that achieves revenue $O(\log m)$ away from  $\sum_{e \in \mE} v_e$, where $m = |\mE|$.
 \end{lemma}
 
 \begin{proof}
-Consider the valuations $v_{e_1}, v_{e_2}, \dots, v_{e_m}$ in increasing order. We claim that $P  = v_{e_j}$ achieves the desired approximation for some edge $e_{j}$. 
-Let $\textsf{OPT} = \sum_{e \in \mE} v_e$. The revenue $R_j$ we obtain by selling at price $v_{e_j}$ is $R_j \geq (m-j)v_{e_j} $. 
+Consider the valuations $v_{e_1}, v_{e_2}, \dots, v_{e_m}$ in increasing order. We claim that setting $p^{b}(e)  = v_{e_j}$ for very $e \in \mE$ achieves the 
+desired approximation for some edge $e_{j}$. 
+The revenue $R_j$ we obtain by selling at price $v_{e_j}$ is $R_j \geq (m-j+1)v_{e_j} $. Then, the best revenue $R$ has $R \geq R_j$.
 %Then $m v_{e_1} < \textsf{OPT}/ \log m$ since we can sell each edge if the bundle price is the smallest valuation. Similarly, $(m - i) v_{e_i} < \textsf{OPT}/ \log m$ for each edge.
 Adding up all inequalities, we get:
 	
 	\begin{equation*}
 	\begin{aligned}
-	\textsf{OPT} = \sum_{j=1}^m v_{e_j} \leq  \sum_{j=1}^m \frac{R_j}{m-j} \leq R \sum_{j=1}^m \frac{1}{j} = R \cdot O(\log m) 
-	%< \frac{\textsf{OPT}}{\log m} (\frac{1}{m} + \frac{1}{m-1} + \dots + 1) \\
-	%& \leq \textsf{OPT}
+	\sum_{j=1}^m v_{e_j} \leq  \sum_{j=1}^m \frac{R_j}{m-j+1} \leq R \sum_{j=1}^m \frac{1}{j} = R \cdot O(\log m) 
 	\end{aligned}
 	\end{equation*}
 \end{proof}
 
-Next, we show that the $O(\log m)$ upper bound is tight.
+
 
 \begin{lemma}
-	There exists a set of buyers with XOS valuations such that any uniform bundle price produces revenue at most $\textsf{OPT}/ \log m$.
+There exists a hypergraph $\mH = (\mV, \mE)$ with XOS valuations, such that any uniform bundle price produces revenue at most $\Omega(\log m)$ from the optimal revenue
+$\sum_{e \in \mE} v_e$.
 \end{lemma}	
+
 \begin{proof}
-	Consider $n=m$ items and $m$ buyers such that buyer $b_i$ wants item $i$ for price $1/i$. It is easy to see that the valuations are XOS and achieves a revenue of $\log m$. Consider any fixed $p^b_e = 1/c$ such that $1 \leq c \leq m$. Then, the seller can sell edges that have valuation at least $1/c$. Observe that the number of such edges is at most $c$. Therefore, the revenue is at most $\sum_{e:v_e \leq 1/c} 1/c = O(1)$.
+	Consider $n$ items and $m$ buyers ($n=m$), such that buyer $b_i$ wants item $i$ for price $1/i$. It is easy to see that the valuations are XOS, and that the optimal revenue
+	is $\sum_i 1/i = \Theta(\log m)$. Consider a uniform bundle price where $p^b(e) = 1/c$ for some $1 \leq c \leq m$. Then, the seller can sell edges that have valuation at least $1/c$. Observe that the number of such edges is at most $c$. Therefore, the revenue can be at most $\sum_{e:v_e \leq 1/c} 1/c = O(1)$.
 \end{proof}
 
 \subsection{Item Pricing}
