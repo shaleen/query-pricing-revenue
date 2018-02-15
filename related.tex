@@ -42,3 +42,7 @@ with competitive ratio $k^2$. The approximation ratio is improved to $k$ by \cit
 which is proven to be near-optimal: under the Exponential Time Hypothesis there is no polynomial-time algorithm 
 that achieves competitive ratio $k^{1-\epsilon}$ \cite{chalermsook2013independent}.
 
+To our knowledge, the empirical performance of these algorithms has not been studied previously, whether on real or synthetic data.
+
+\paragraph{Pricing information.}
+Another line of research in economics considers the revenue maximization problem for a seller offering to sell information. See, for example, \cite{BKP-12, BB-15, BBS-17} and references therein. However, that literature differs from our work in several fundamental respects. First, in those works, both the seller and the buyer are unaware of the true state of the information (i.e. the dataset), and this state is stochastic. Second, the seller is allowed to sell queries whose results are randomized. Third, the buyer's type (which information he is interested in and his value) are unknown to the seller. In contrast, in our setting while the pricing is required to be arbitrage-free, the types of the buyers are known to the seller in advance. As such the two models lead to very different types of pricing mechanisms and algorithms.
