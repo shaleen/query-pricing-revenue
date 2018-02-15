@@ -12,11 +12,19 @@ in decreasing order of valuation. Then, it makes a linear pass over the ordered 
 if we set the price $P = v_e$. In the end, it outputs $\max_e \{R_e\}$. It is easy to see that the algorithm runs in time $O(m \log m)$, and that it achieves an approximation
 ratio of $O(\log m)$.
 
+%<<<<<<< HEAD
+%%\begin{enumerate}
+%%	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
+%%	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
+%%	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
+%%\end{enumerate}
+%=======
 %\begin{enumerate}
 %	\item Since all bundles are sold at a fixed take-it or leave-it price, it is a monotone and subadditive pricing function by definition;
-%	\item Finding the right fixed price $p'$ can be done in time  $O(|E|\log |E|)$;
+%	\item Finding the right fixed price $p'$ can be done in time  $O(m\log m)$;
 %	\item It does not depend on the size of the hyperedge, i.e, even if the hyperedge is empty, we can still sell the hyperedge.
 %\end{enumerate}
+%>>>>>>> 04c2b47ff5bb0e9d820bfc9a40703e6fbff29fbd
 
 Uniform bundle pricing is very attractive as a practical pricing scheme, since it has a single parameter (and thus it has a concise representation), and computing the price of a new query is a trivial task. 
 However, because it is insensitive to the structure of the bundle (and hence the query), it will perform very poorly when the valuations have a large difference across the hyperedges. 
@@ -76,9 +84,9 @@ In our experiments, we evaluate four different item pricing algorithms.
 \paragraph{The Uniform Item Pricing (\uip) Algorithm.}
 Our first item pricing algorithm is an $O(\log n + \log m)$-approximation algorithm given by Guruswami et. al~\cite{guruswami2005profit}. \uip\ considers all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices.
 
-\subsubsection{An $O(\log |V|+\log |E|)$-approximation algorithm}
+\subsubsection{An $O(\log n+\log m)$-approximation algorithm}
 
-The first item-pricing algorithm we implement is an $O(\log |V| + \log |E|)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{|E|}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
+The first item-pricing algorithm we implement is an $O(\log n+\log m)$-approximation algorithm given by~\cite{guruswami2005profit}. We consider all candidate uniform item prices $q_e = \frac{v_e}{m}$. Then, the algorithm will identify the set of hyperedges that can be sold by using $w_v = q_e$ for all vertices. In practice we can improve the performance of the algorithm by relaxing the contraint that all items have the same price: once we identify the subset of hyperedges that can be sold, we refine the prices of different items by running a linear program. The final item prices are the ones that maximize the revenue. 
 
 \subsubsection{An $O(\log B)$-approximation algorithm}
 
