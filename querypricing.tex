@@ -8,6 +8,27 @@ In this section, we present the framework of query-based pricing proposed by \ci
 The {\em data seller} wants to sell a database instance $\db$ through a data market, which functions as the broker. \textcolor{red}{The instance has a fixed relational schema $\bR = (R_1, \dots, R_k)$ with $k$ relations.} We denote by $\mI$ the set of possible database instances. The set $\mI$ encodes information about the data that is provided by the data seller, and is public information known to any buyer (together with the schema). We allow the set $\mI$ to be infinite, but countable. \textcolor{red}{For example, suppose that the schema consists of a single binary relation $R(A,B)$, and the domain of both attributes is $[n] = \set{1, \dots, n}$. Then, $\mI = 2^{[n] \times [n]}$, \ie the set of all directed graphs on the vertex set $[n]$.}
 
 {\em Data buyers} can purchase information from the dataset by issuing queries in the form of a {\em query bundle}  $\bQ=\qb{Q_1, \hdots, Q_n}$, which is a vector of queries. For our purposes, a query $Q$ is a deterministic function that takes as input a database instance $\db$ and returns an output $Q(\db)$. We denote the output of the query bundle by $\bQ(\db) = \qb{Q_1(\db), \hdots Q_n(\db)}$. 
+
+\begin{example}
+	\textit{Consider a database that consists of a single \textsc{User} relation as shown in Figure~\ref{fig:example}. Suppose that the data seller has fixed the price of the entire relation to $\$100$. Consider a data buyer, Alice, who is a data analyst and wants to study user demographics. Since Alice has a limited budget, she cannot afford to purchase the entire database. Thus, Alice will extract information from the table by issuing relational queries over time. We will use this as a running example throughout the section.}
+\end{example}
+
+\begin{figure}[t]
+	\centering
+			\begin{tabular} {|l|l|c|c|}
+				\multicolumn{4}{ l }{\textsc{User}} \\ 
+				\hline
+				\textsf{\underline{uid}} & \textsf{name} & \textsf{gender} & \textsf{age}  \\ \hline
+				1 & Abe &  m & 18 \\ 
+				2 & Alice  & f & 20 \\
+				3 & Bob & m & 25 \\
+				4 & Cathy & f & 22 \\
+				\hline
+			\end{tabular}
+			\caption{\textsc{User} relation with $4$ attributes. \textsf{\underline{uid}} is the primary key.}
+			\label{fig:example}
+\end{figure}
+
 A {\em pricing function} $p(\bQ, \db)$ takes as input a query bundle $\bQ$ and a database instance $\db \in \mI$ and assigns to it a price,\footnote{Observe that allowing prices to be general functions of query bundles, rather than just additive over queries allows for more expressivity and therefore more revenue for the seller.} which is a number in $ \mathbb{R}_+$. 
 % The reason we consider query bundles in our setting is that in practice a data buyer will issue over time a sequence $\bQ_1, \dots, \bQ_m$ of query bundles on the database. In this case, after issuing the first $i$ queries, the data buyer should not be charged a price of $\sum_i p(\bQ_i,D)$, but instead $p(\bQ_1, \dots, \bQ_i, D)$. 
 
@@ -17,11 +38,21 @@ Assigning prices to query bundles without any restrictions can lead to arbitrage
 \introparagraph{Information Arbitrage} The first condition captures the intuition that if a query bundle $\bQ_1$ reveals a subset of information of what a query bundle $\bQ_2$ reveals, then the price of $\bQ_1$ must be no more than the price of $\bQ_2$. If this condition is not satisfied, it creates an arbitrage opportunity, since a data buyer can purchase $\bQ_2$ instead, and use it to obtain the answer of $\bQ_1$ for a cheaper price. 
 
 Formally, we say that $\bQ_2$ determines $\bQ_1$ under database $\db$, denoted $\db \vdash \bQ_2 \dtr \bQ_1$ if for every database $\db' \in \mI$ such that $\bQ_2(\db) = \bQ_2(\db')$, we also have  $\bQ_1(\db') = \bQ_1(\db)$.
-We say that the pricing function $p$ has no {\em information arbitrage} if for every database $\db \in \mI$ such that $\db \vdash \bQ_2 \dtr \bQ_1$, we have $p(\bQ_2, \db) \geq  p(\bQ_1, \db)$. \todo{example}
+We say that the pricing function $p$ has no {\em information arbitrage} if for every database $\db \in \mI$ such that $\db \vdash \bQ_2 \dtr \bQ_1$, we have $p(\bQ_2, \db) \geq  p(\bQ_1, \db)$.
 
-\introparagraph{Bundle Arbitrage} The second condition regards the scenario where a data buyer wants to obtain the answer for the query bundle $\bQ = \bQ_1\Vert \bQ_2$, where $\Vert$ denotes vector concatenation. Instead of asking $\bQ$ as one, the buyer can create two separate accounts, and use one to ask for $\bQ_1$ and the other to ask for $\bQ_2$. To avoid such an arbitrage situation, we must make sure that the price of $\bQ$ is at most the sum of the prices for $\bQ_1$ and  $\bQ_2$. \todo{example}
+\begin{example}
+	\textit{In our running example, suppose that Alice wants to count the number of female users in the relation. She can issue the query $Q_1 = \texttt{SELECT count(*) FROM User WHERE gender = 'f'}$. However, a different way she can learn the same information is by issuing the query $Q_2 = \texttt{SELECT gender,}$ $\texttt{ count(*) FROM User GROUP BY gender}$. $Q_2$ will return the number of users for each gender as its output. Suppose that the buyer charges $p(Q_1) = \$10$ and $p(Q_2) = \$5$, then there exists an information arbitrage opportunity. Since Alice can learn the required information from $Q_2$ at a {\emph{cheaper}} cost, she has no incentive to purchase $Q_1$. Thus, if the seller wants to prevent this arbitrage, he needs to ensure that $p(Q_1) \leq p(Q_2)$. Thus, the seller now sets the price of $Q_2$ to $\$10$, i.e, $p(Q_2) = \$10$.}
+\end{example}
+
+\introparagraph{Bundle Arbitrage} The second condition regards the scenario where a data buyer wants to obtain the answer for the query bundle $\bQ = \bQ_1\Vert \bQ_2$, where $\Vert$ denotes vector concatenation. Instead of asking $\bQ$ as one, the buyer can create two separate accounts, and use one to ask for $\bQ_1$ and the other to ask for $\bQ_2$. To avoid such an arbitrage situation, we must make sure that the price of $\bQ$ is at most the sum of the prices for $\bQ_1$ and  $\bQ_2$. 
 %
 Formally, we say that the price function $p$ has no {\em bundle arbitrage} if for every database $\db \in \mI$, we have $p(\bQ_1\Vert \bQ_2, \db) \leq p(\bQ_1, \db) + p(\bQ_2, \db)$. 
+
+
+\begin{example}
+	\textit{Suppose Alice now wants to find the average age of female users in the relation. She can issue the query $Q_4 = \texttt{SELECT AVG(age) FROM User WHERE gender = 'f'}$. Suppose the seller decides to price $p(Q_4) = \$20$. However, Alice could have also chosen to ask $Q_5 = \texttt{SELECT SUM(age) FROM User}$ $\texttt{ WHERE gender = 'f'}$. Now, she can obtain her desired result by combining the answers of $Q_5$ and $Q_2$ \footnote{We assume that it is public information that gender in this relation takes only two values: \textsf{m} and \textsf{f} }. If the seller prices $p(Q_5) = \$5$, then there exists a bundle arbitrage opportunity, since $p(Q_4) > p(Q_5) + p(Q_2)$ which gives Alice an incentive to split her query. To avoid this, the seller needs to ensure that $p(Q_4) \leq p(Q_5) + p(Q_2)$.}
+\end{example}
+
 
 \textcolor{red}{Perhaps switch around the order of the two conditions.}
 
