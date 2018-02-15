@@ -191,36 +191,22 @@ If we price every bundle at its value, the revenue extracted is maximized. For e
 
 Next, we will show that no uniform bundle pricing or item pricing can extract revenue more than $O(3^{t})$.
 
-\begin{lemma}
-	No uniform bundle price can obtain revenue more than $O(3^{t})$
-\end{lemma}	
-\begin{proof}
-	The first observation is that we need to consider only bundle prices of the form $\left( \frac{3}{4} \right)^{k}$. Let the bundle price chosen be $\left( \frac{3}{4} \right)^{k}$. Then, we can sell all edges at depth $\leq k$. This gives us the revenue bound,
-	
-	\begin{align*}
-	\textsf{OPT}_B & = \sum_{i \leq k} \left( \frac{3}{4} \right)^{k} \cdot \left( \frac{2}{3} \right)^{i} \cdot 3^{t} \cdot 2^{i} 
-	\displaybreak[0]\\
-	& = \left( \frac{3}{4} \right)^{k} \cdot 3^{t} \sum_{i \leq k} \left( \frac{4}{3} \right)^{i} \displaybreak[0]\\
-	& \leq \left( \frac{3}{4} \right)^{k} \cdot 3^{t} \cdot \left( \frac{4}{3} \right)^{k} = O(3^{t})
-	\end{align*}
-	
-\end{proof}
+For optimal bundle pricing, the first observation is that we need to consider only bundle prices of the form $\left( \frac{3}{4} \right)^{k}$, i.e. the value of some set in the laminar system. Let the bundle price chosen be $\left(\frac{3}{4} \right)^{k}$, then we can sell all edges at depth $\leq k$. The revenue collected by such bundle pricing is 
+\begin{equation*}
+\textsf{OPT}_B = \sum_{i \leq k} \left( \frac{3}{4} \right)^{k} \cdot \left( \frac{2}{3} \right)^{i} \cdot 3^{t} \cdot 2^{i} 
+ = \left( \frac{3}{4} \right)^{k} \cdot 3^{t} \sum_{i \leq k} \left( \frac{4}{3} \right)^{i} \displaybreak[0]\\
+ \leq \left( \frac{3}{4} \right)^{k} \cdot 3^{t} \cdot \left( \frac{4}{3} \right)^{k} = O(3^{t}).
+\end{equation*}
 
-\begin{lemma}
-	No item pricing can obtain revenue more than $O(3^{t})$
-\end{lemma}
-\begin{proof}
-	Let $k$ be the smallest depth for any set sold by the optimal item pricing solution. The main observation is that the revenue obtained from all sets sold by optimal item pricing is at most the revenue obtained by selling all sets with depth $\geq k$. This is true because we can only overestimate the revenue by considering some sets that are not otherwise part of the item pricing solution. Consider the revenue obtained from all sets at depth $k$. Each set has valuation $\left( \frac{3}{4} \right)^{k}$ and there are $2^{k}$ sets. Observe that the item pricing can hope to extract at most $\left( \frac{3}{4} \right)^{k} \cdot 2^{k}$ revenue from any level $\geq k$.  Thus, the total revenue from all copies of sets with depth $ \geq k$ is,
-	
-	\begin{align*}
-		\textsf{OPT}_{IP} & = \sum_{i \geq k} \left( \frac{3}{4} \right)^{k} \cdot   2^{k}  \cdot  c_i \displaybreak[0]\\
-		& = \left( \frac{3}{2} \right)^{k} \cdot   3^{t} \sum_{i \geq k} \left( \frac{2}{3} \right)^{k} \displaybreak[0] \\
-		& \leq \left( \frac{3}{2} \right)^{k} \cdot  3^{t+1} \cdot  \left( \frac{2}{3} \right)^{k} \cdot  \left( 1 - \left(\frac{2}{3}\right)^{t - k} \right) \displaybreak[0] \\
-		& = O(3^{t})
-	\end{align*}
-\end{proof}
+For optimal item pricing, let $k$ be the smallest depth for any set sold by an optimal item pricing solution. By symmetry we can assume that all sets with depth $k$ are sold. Then the sum of prices of all items is upper bounded by $\sum_{i}p_i\leq (\frac{3}{4})^{k}\cdot 2^k=(\frac{3}{2})^k$, since there are $2^k$ distinct sets with depth $k$. Thus the revenue of such item pricing is contributed by sets with depth at least $k$, and can be upper bounded by
+\begin{equation*}
+\textsf{OPT}_{IP}\leq\sum_{\ell\geq k}\left(\frac{3}{2}\right)^k\cdot c_\ell=\left( \frac{3}{2} \right)^{k} \cdot   3^{t} \sum_{i \geq k} \left( \frac{2}{3} \right)^{k}
+\leq \left( \frac{3}{2} \right)^{k} \cdot  3^{t+1} \cdot  \left( \frac{2}{3} \right)^{k} \cdot  \left( 1 - \left(\frac{2}{3}\right)^{t - k} \right)
+=O(3^{t})
+\end{equation*}
+since each set in level $\ell$ has $c_\ell$ copies.
 
-The last part is to express the revenue gap $\Omega(t)$ in terms of the total number of sets $m$ in the family. Note that $m = \sum_{i = 0}^{i = t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
+In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\textsf{OPT}_{IP})$ is $\Omega(t)$. Note that $m = \sum_{i = 0}^{i = t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
 
 
 \end{proof}
