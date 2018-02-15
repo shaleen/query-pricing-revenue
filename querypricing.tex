@@ -43,7 +43,8 @@ We can now compute a price for $\bQ$ by applying a set function $f: 2^{\mS} \rig
 By choosing $f$ to be monotone and subadditive, we can guarantee that the pricing function is arbitrage-free.
 
 \begin{theorem}[\cite{deep2016design}] \label{cor:arbitrage}
-Let $\mS \subseteq \mI$, and $f$ be a monotone and subadditive set function $f: 2^{\mS} \rightarrow  \mathbb{R}_+$. Then, the function $p(\bQ, \db) = f(\dagr{\mS}{\bQ, \db})$ is arbitrage-free.
+Let $\mS \subseteq \mI$, and $f$ be a set function $f: 2^{\mS} \rightarrow  \mathbb{R}_+$. Then, the function $p(\bQ, \db) = f(\dagr{\mS}{\bQ, \db})$ is arbitrage-free
+if and only if  $f$ is monotone and subadditive. 
 \end{theorem}
 
 \subsection{Revenue Maximization}
