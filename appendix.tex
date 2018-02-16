@@ -210,3 +210,155 @@ In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\t
 
 
 \end{proof}
+
+
+\begin{table}
+	\begin{tabular}{l|L{12cm}}
+		\toprule
+		& \textbf{Query}  \\
+		\midrule
+		
+		$Q_1$ & \texttt{
+			select count(Name) from Country where Continent = `Asia'
+		} \\ \hdashline 
+		
+		$Q_2$ & \texttt{
+			select count(distinct Continent) from Country
+		} \\ \hdashline
+		
+		$Q_3$ & \texttt{
+			select avg(Population) from Country 
+		} \\ \hdashline
+		
+		$Q_4$ & \texttt{
+			select max(Population) from Country
+		} \\ \hdashline
+		
+		$Q_5$ & \texttt{
+			select min(LifeExpectancy) from Country
+		} \\ \hdashline
+		
+		$Q_6$ & \texttt{
+			select count(Name) from Country where Name like `A%' 
+		} \\ \hdashline
+		
+		$Q_7$ & \texttt{
+			select Region, max(SurfaceArea) from Country group by Region 
+		} \\ \hdashline
+		
+		$Q_8$ & \texttt{
+			select Continent, max(Population) from Country group by Continent
+		} \\ \hdashline
+		
+		$Q_9$ & \texttt{
+			select Continent, count(Code) from Country group by Continent
+		}\\
+		
+		
+		$Q_{10}$ & \texttt{
+			select * from Country
+		} \\ \hdashline
+		
+		$Q_{11}	$ & \texttt{
+			select Name from Country where Name like 'A\%'
+		} \\ \hdashline
+		
+		$Q_{12}$ & \texttt{
+			select * from Country where Continent='Europe' and Population > 5000000 
+		} \\ \hdashline
+		
+		$Q_{13}$ & \texttt{
+			select * from Country where Region='Caribbean' 
+		} \\ \hdashline
+		
+		$Q_{14}$ & \texttt{
+			select Name from Country where Region='Caribbean'
+		}\\
+		
+		$Q_{15}$ & \texttt{
+			select Name from Country where Population between 10000000 and 20000000
+		} \\ \hdashline
+		
+		$Q_{16}$ & \texttt{
+			select * from Country where Continent='Europe' limit 2
+		} \\ \hdashline
+		
+		$Q_{17}$ & \texttt{
+			select Population from Country where Code = USA'
+		} \\ \hdashline
+		
+		$Q_{18}$ & \texttt{
+			select GovernmentForm from Country
+		} \\ \hdashline
+		
+		$Q_{19}$ & \texttt{
+			select distinct GovernmentForm from Country
+		} \\ \hdashline
+		
+		$Q_{20}$ & \texttt{
+			select * from City where Population >= 1000000 and CountryCode = 'USA' 
+		} \\ \hdashline
+		
+		$Q_{21}$ & \texttt{
+			select distinct Language from CountryLanguage where CountryCode='USA'
+		} \\ \hdashline
+		
+		$Q_{22}$ & \texttt{
+			select * from CountryLanguage where IsOfficial = 'T'
+			'} \\ \hdashline
+		
+		$Q_{23}$ & \texttt{
+			select Language, count(CountryCode) from CountryLanguage group by Language
+		} \\ \hdashline
+		
+		$Q_{24}$ & \texttt{
+			select count(Language) from CountryLanguage where CountryCode = 'USA'
+		} \\ \hdashline
+		
+		$Q_{25}$ & \texttt{
+			select CountryCode, sum(Population) from City group by CountryCode 
+		} \\ \hdashline
+		
+		$Q_{26}$ & \texttt{
+			select CountryCode, count(ID) from City group by CountryCode 
+		} \\ \hdashline
+		
+		$Q_{27}$ & \texttt{
+			select * from City where CountryCode = 'GRC'
+		} \\ \hdashline
+		
+		$Q_{28}$ & \texttt{
+			select distinct 1 from City where CountryCode = 'USA' and Population > 10000000
+		} \\ \hdashline
+		
+		$Q_{29}$ & \texttt{
+			select Name from Country , CountryLanguage where Code = CountryCode and Language = 'Greek'
+		} \\ \hdashline
+		
+		$Q_{30}$ & \texttt{
+			select C.Name from Country C, CountryLanguage L where C.Code = L.CountryCode and L.Language = 'English' and L.Percentage >= 50
+		} \\ \hdashline
+		
+		$Q_{31}$ & \texttt{
+			select T.district from Country C, City T where C.code = 'USA' and C.capital = T.id
+		} \\ \hdashline
+		
+		$Q_{32}$ & \texttt{
+			select * from Country C, CountryLanguage L where C.Code = L.CountryCode and L.Language = 'Spanish'
+		} \\ \hdashline
+		
+		$Q_{33}$ & \texttt{
+			select Name, Language from Country , CountryLanguage where Code = CountryCode 
+		} \\ \hdashline
+		
+		$Q_{34}$ & \texttt{
+			select * from Country , CountryLanguage where Code = CountryCode
+		} \\ \hdashline
+		
+	\end{tabular}
+	\vspace{2mm}
+	\caption{Queries used for \texttt{world} database}
+	\label{table:worldqueries}
+\end{table}
+
+
