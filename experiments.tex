@@ -180,8 +180,8 @@ the size of the edges is relatively concentrated. Finally, the layering algorith
 		\begin{tabular}{@{}lrrrrr@{}}\toprule
 			\textbf{Query Workload} & \textbf{\lpip} & \textbf{\ubp} & \textbf{\uip} & \textbf{\cip} & \textbf{Layering}  \\ \midrule
 			
-			\textbf{skewed} &  60.62 & 15.50 & 25.45 & 812.67 & 15.67 \\ \hdashline
-			\textbf{uniform} &  95.81 & 18.68 &  29.82 &1800 & 50.19 \\
+			\textbf{skewed} &  60.62 & $< 1$ & 25.45 & 812.67 & 15.67 \\ \hdashline
+			\textbf{uniform} &  95.81 & $< 1$ &  29.82 &1800 & 50.19 \\
 			\bottomrule
 		\end{tabular}
 	\end{small}
@@ -189,7 +189,7 @@ the size of the edges is relatively concentrated. Finally, the layering algorith
 	\label{table:runtime}
 \end{table*}
 
-In this section we discuss the running time of the algorithms. Table~\ref{table:runtime} shows the runtime of all algorithms for both query workloads. The most time efficient algorithms are uniform bundle pricing, uniform item pricing and the layering algorithm. Uniform bundle pricing and uniform item pricing depend only on number of hyperedges and the number of items in the hypergraph. Thus, they are very fast to run in practice. The layering algorithm is slightly slower but comparable in performance. Note that the layering is faster on the skewed query workload as compared to the uniform query workload, since the maximum degree $B$ is much smaller. 
+In this section we discuss the running time of the algorithms. Table~\ref{table:runtime} shows the runtime of all algorithms for both query workloads. The most time efficient algorithms are uniform bundle pricing, uniform item pricing and the layering algorithm. Uniform bundle pricing and uniform item pricing depend only on number of hyperedges and the number of items in the hypergraph. Thus, they are very fast to run in practice. Note that for all item pricing algorithms, we also include the time taken to compute the conflict set of the query. However, for uniform bundle pricing, we need not take that into account as it is independent of the conflict set. The layering algorithm is slightly slower but comparable in performance. Note that the layering is faster on the skewed query workload as compared to the uniform query workload, since the maximum degree $B$ is much smaller. 
 
 The two slowest running algorithms are \lpip\ and \cip\ as they require running multiple linear programs. In practice, \lpip\ is faster than \cip. This is because the size of the linear program is very different. In our setting, the number of edges $m \sim 1000$ is much smaller than the number of items $n = 15000$. \lpip\  has at most one constraint per bundle (thus, at most $m$ constraints) but \cip\ has one constraint per item ($n$ constraints in total). This dramatically influences the running time of the two algorithms. \cip\ uses $(1+\epsilon)$ as a parameter, where $\epsilon$ controls the limited supply available for each item. We adjust the value of $\epsilon$ for both workloads to ensure that the running time is at most $30$ minutes. We fix $\epsilon = 0.2$ for the skewed workload and $\epsilon = 4$ for the uniform workload based on our empirical observations.
 
@@ -209,10 +209,10 @@ The two slowest running algorithms are \lpip\ and \cip\ as they require running 
 			\textbf{Support Set Size} & \textbf{\lpip} & \textbf{\ubp} & \textbf{\uip} & \textbf{\cip} & \textbf{Layering}  \\ \midrule
 			
 			$|\mS| = 100$ &  $<1$ & $<1$ & $<1$ & $<1$ & $<1$ \\ \hdashline
-			$|\mS| = 500$ &  6.16 & 4.32 &  5.25 & 6.87 & $<1$ \\ \hdashline
-			$|\mS| = 1000$ &  15.10 & 8.71 &  17.43 & 29.82 & $<1$ \\ \hdashline
-			$|\mS| = 5000$ &  30.12 & 18.68 &  29.82 & 189.97 & 3.65 \\ \hdashline
-			$|\mS| = 15000$ &  70.42 & 25.19 &  35.21 & 676.23 & 12.34 \\
+			$|\mS| = 500$ &  6.16 & $<1$ &  5.25 & 6.87 & 1.6 \\ \hdashline
+			$|\mS| = 1000$ &  15.10 & $<1$ &  17.43 & 29.82 & 3.12 \\ \hdashline
+			$|\mS| = 5000$ &  30.12 & $<1$ &  29.82 & 189.97 & 8.78 \\ \hdashline
+			$|\mS| = 15000$ &  70.42 & $<1$ &  35.21 & 676.23 & 12.34 \\
 			\bottomrule
 		\end{tabular}
 	\end{small}
