@@ -200,13 +200,13 @@ For optimal bundle pricing, the first observation is that we need to consider on
 
 For optimal item pricing, let $k$ be the smallest depth for any set sold by an optimal item pricing solution. By symmetry we can assume that all sets with depth $k$ are sold. Then the sum of prices of all items is upper bounded by $\sum_{i}p_i\leq (\frac{3}{4})^{k}\cdot 2^k=(\frac{3}{2})^k$, since there are $2^k$ distinct sets with depth $k$. Thus the revenue of such item pricing is contributed by sets with depth at least $k$, and can be upper bounded by
 \begin{equation*}
-\textsf{OPT}_{IP}\leq\sum_{\ell\geq k}\left(\frac{3}{2}\right)^k\cdot c_\ell=\left( \frac{3}{2} \right)^{k} \cdot   3^{t} \sum_{i \geq k} \left( \frac{2}{3} \right)^{k}
-\leq \left( \frac{3}{2} \right)^{k} \cdot  3^{t+1} \cdot  \left( \frac{2}{3} \right)^{k} \cdot  \left( 1 - \left(\frac{2}{3}\right)^{t - k} \right)
+\textsf{OPT}_{IP}\leq\sum_{\ell\geq k}\left(\frac{3}{2}\right)^k\cdot c_\ell=\left( \frac{3}{2} \right)^{k} \cdot   3^{t} \sum_{\ell \geq k} \left( \frac{2}{3} \right)^{\ell}
+\leq \left( \frac{3}{2} \right)^{k} \cdot  3^{t+1} \cdot  \left( \frac{2}{3} \right)^{k} 
 =O(3^{t})
 \end{equation*}
 since each set in level $\ell$ has $c_\ell$ copies.
 
-In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\textsf{OPT}_{IP})$ is $\Omega(t)$. Note that $m = \sum_{i = 0}^{t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
+In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\textsf{OPT}_{IP})$ is $\Omega(t)$. Note that $m = \sum_{k = 0}^{t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
 
 
 \end{proof}
