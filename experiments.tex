@@ -4,8 +4,8 @@ In this section, we empirically evaluate the performance of the five pricing alg
 in Section~\ref{section-approxalgo}. We evaluate the performance across two measures: $(i)$ the runtime of
 the algorithm, and $(ii)$ the revenue that the algorithm can generate. 
 All pricing algorithms run on hypergraph structures that are generated from a workload of
-\texttt{SQL} queries executed over real-world datasets. The valuations are obtained using different
- generative models, so as to observe the algorithmic behavior under different scenarios.
+\texttt{SQL} queries executed over a real-world dataset. The valuations are obtained using different
+ generative random processes, so as to observe the algorithmic behavior under different scenarios.
 
 %We first describe our experimental setup, followed by the various knobs that we can control to create different instances of the hypergraph instances and valuations. 
 
@@ -19,11 +19,11 @@ storing only the differences from $\db$, which is efficient in terms of storage.
 For every query bundle $\bQ$, \textsc{Qirana} computes the conflict set $\dagr{\mS}{\bQ,\db}$, which
 is the bundle (or hyperedge) that we use as input to the pricing algorithms.
 
-Table~\ref{table:experiments} shows the design space of the experimental evaluation. 
-Our experiments will be over the $\texttt{\bfseries world}$ dataset, 
+Table~\ref{table:experiments} shows the design space of our experimental evaluation. 
+Our experiments are over the $\texttt{\bfseries world}$ dataset, 
 and two different types of query workloads. Each query workload will generate a 
-hypergraph; to assign valuations over the hyperedges, we use different generative random
-models, which we describe later in detail. We evaluate our algorithms for each instance that is
+hypergraph; to assign valuations over the hyperedges, we sample from different types of distributions, 
+which we describe later in detail. We evaluate our algorithms for each instance that is
 generated in this fashion. 
 
 In order to compare how well our algorithms perform in terms of revenue, we use two upper 
@@ -136,7 +136,7 @@ Second, we sample valuations from the zipfian distribution parametrized by $a$.
 
 The layering algorithm does not perform well except in the case of zipfian distribution with exponent smaller than $2$. Indeed, for $a < 2$, zipfian distribution assigns a large valuation to some hyperedge that contributes significantly to the total revenue. In such cases, the layering algorithm can always extract full revenue from the layer containing high valuation edges and perform well in practice. As the zipfian exponent becomes greater than two, the spread of valuations becomes smaller and the layering algorithm performs worse. 
 
-Finally, the \cip\ algorithm does not perform that well, even though it is theoretically optimal. This is because going over all capacity vectors with limited supply is extremely expensive. In our implementation, running the linear program for a large number of capacity vectors for the uniform workload takes close to $2$ hours in total (we discuss reasons for this in the next section). Thus, we reduce the number of capacity vectors that we try by increasing the $(1+\epsilon)$ parameter. This introduces a factor of $(1+\epsilon)$ in the approximation ratio but allows for the running time to be smaller. For the purpose of experiments, we set $(1+\epsilon)$ such that the running time is $\sim 30$ minutes. Performing this optimization allows us to complete the algorithm rather than truncating the experiment prematurely and returning the best result obtained so far.  The approximation factor of \cip\ remains marginally inferior to \lpip (although in some cases, it outperforms \lpip). 
+Finally, the \cip\ algorithm does not perform that well, even though it is theoretically optimal. This is because going over all capacity vectors with limited supply is very expensive. In our implementation, running the linear program for a large number of capacity vectors for the uniform workload takes close to $2$ hours in total (we discuss reasons for this in the next section). Thus, we reduce the number of capacity vectors that we try by increasing the $(1+\epsilon)$ parameter. This introduces a factor of $(1+\epsilon)$ in the approximation ratio but allows for the running time to be smaller. For the purpose of experiments, we set $(1+\epsilon)$ such that the running time is $\sim 30$ minutes. Performing this optimization allows us to complete the algorithm rather than truncating the experiment prematurely and returning the best result obtained so far.  The approximation factor of \cip\ remains marginally inferior to \lpip\ (although in some cases, it outperforms \lpip). 
 
 
 \begin{figure}[!t]
@@ -145,8 +145,8 @@ Finally, the \cip\ algorithm does not perform that well, even though it is theor
 	\caption{Scaling Bundle Valuations: uniform and skewed workload} \label{fig:scalingedge}
 \end{figure}  
 
-\subsubsection{Scaling Bundle Valuations} In the previous, the valuations are sampled independently of the edge size. Our next experiment correlates the size of each hyperedge with the valuation that is assigned to it. 
-To achieve this, we sample each valuation from the parameterized exponential and normal distribution as follows: we assign $v_e \sim {\rm exponential} (\beta = m^k)$ where $\beta$ is the mean of the distribution. Similarly, for normal distribution, we assign $v_e \sim \mathcal{N}(\mu = m^k,\, \sigma^2 = 10)$. Here $k$ is the parameter that we will vary. Figure~\ref{fig:scalingedge} shows the revenue
+\subsubsection{Scaling Bundle Valuations} In the previous scenario, the valuations were sampled independently of the edge size. Our next experiment correlates the size of each hyperedge with the valuation that is assigned to it. 
+To achieve this, we sample each valuation from the parameterized exponential and normal distribution as follows: we assign $v_e \sim {\rm exponential} (\beta = |e|^k)$ where $\beta$ is the mean of the distribution. Similarly, for normal distribution, we assign $v_e \sim \mathcal{N}(\mu = |e|^k,\, \sigma^2 = 10)$. Here $k$ is the parameter that we will vary. Figure~\ref{fig:scalingedge} shows the revenue
 generated for the two query workloads and two families of distributions for 
 different values of the parameter $k$. 
 
@@ -200,7 +200,7 @@ The two slowest running algorithms are \lpip\ and \cip\ as they require running 
 \begin{figure}[!t]
 	\centering
 	\includegraphics[scale=0.40]{varyingsupportset.pdf}
-	\caption{Revenue generated with changing item set} \label{fig:supportsetsize}
+	\caption{Revenue generated with increasing itemset size} \label{fig:supportsetsize}
 \end{figure}  
 
 \begin{table*}
@@ -220,5 +220,5 @@ The two slowest running algorithms are \lpip\ and \cip\ as they require running 
 	\label{table:runtime:supportsetsize}
 \end{table*}
 
-Our final set of experiments is to understand the impact of support set size, i.e, the number of items $n$. Given a hypergraph instance, adding more items to the hypergraph is an interesting propositions since it can only increase the revenue. However, this also comes at a higher cost of algorithm running time. On the other hand, too few items in the hypergraph can lead to bad revenue generation for most algorithms (except uniform bundle pricing since it is independent of the items). Figure~\ref{fig:supportsetsize} demonstrates the impact of changing support set size on the revenue extracted. Unsurprisingly, uniform bundle pricing is not impacted by the support set size. As the support set size decreases for $15000$ to $100$, the subadditive bound also decreases which caps the performance of all item pricing algorithm. Table~\ref{table:runtime:supportsetsize} depicts running time of all algorithms as a function of support size. The key takeaway is that running time is dependent on the support set size. Thus, the right tradeoff depends on the data seller requirements. It remains an interesting open problem to design algorithms for choosing the items in a smarter way. This will ensure that we can get good revenue guarantees without sacrificing running time too much.
+Our final set of experiments is to understand the impact of support set size, \ie, the number of items $n$. Given a hypergraph instance, adding more items to the hypergraph is an interesting proposition since it can only increase the revenue. However, this also comes at a higher cost of running time. On the other hand, too few items in the hypergraph can lead to suboptimal revenue for most algorithms (except uniform bundle pricing, since it is independent of the items). Figure~\ref{fig:supportsetsize} demonstrates the impact of changing the support set size on the revenue extracted. Unsurprisingly, uniform bundle pricing is not impacted by the support set size. As the support set size decreases for $15000$ to $100$, the  performance of all item pricing algorithms decreases. Finally, table~\ref{table:runtime:supportsetsize} depicts the running time of all algorithms as a function of support size. The key takeaway is that running time is dependent on the support set size. Thus, the right tradeoff depends on the data seller requirements. It remains an interesting open problem to design algorithms for choosing the items in a smarter way. This will ensure that we can get good revenue guarantees without sacrificing running time.
 
