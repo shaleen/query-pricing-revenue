@@ -1,22 +1,46 @@
 \section{Experimental Evaluation}
 
-In this section, we will empirically evaluate the performance of known approximation algorithms for item pricing and bundle pricing. Our goal is to understand the behavior of the algorithms on practical \texttt{SQL} queries over real world datasets as well as the behavior on random hypergaphs. We will first describe our experimental setup, followed by the various knobs that we can control to create different instances of the hypergraph instances and valuations. 
+In this section, we empirically evaluate the performance of the five pricing algorithms presented 
+in Section~\ref{section-approxalgo}. We evaluate the performance across two measures: $(i)$ the runtime of
+the algorithm, and $(ii)$ the revenue that the algorithm can generate. 
+All pricing algorithms run on hypergraph structures that are generated from a workload of
+\texttt{SQL} queries executed over real-world datasets. The valuations are obtained using different
+ generative models, so as to observe the algorithmic behavior under different scenarios.
+
+%We first describe our experimental setup, followed by the various knobs that we can control to create different instances of the hypergraph instances and valuations. 
 
 \subsection{Experimental setup}
 
-We perform all our experiments on $2.2$ GHz processor machine with $4$ cores and $16$ GB main memory running OS X $10.10.5$. \texttt{MySQL} is used as the underlying database for query processing and evaluation . Our implementation is written in \textsc{Python} as an enhancement in \textsc{Qirana} prototype system. \textsc{Qirana} generates random neighbors of a database as its support set over which query pricing is performed. The advantage of using neighbors is that we can succinctly represent the neighbor without storing the new database, i.e, we can represent the neighbor by storing only the \emph{update query} that generates the neighboring database. Thus, given a query $\bQ$ and support set $\mS$ for database $\db$, \textsc{Qirana} will compute the conflict set of the query. Then, the system will assign prices to each item in the conflict set.
-Table~\ref{table:experiments} shows the experimental design space we consider. Our experiments will be over three different datasets. For each dataset and valuation model (which in turn will use different distributions), we compute the revenue that can be extracted using the algorithms listed. In order to compare different algorithms we use two upper bounds: $(i)$ sum of valuations, and $(ii)$ an upper bound on the optimal subadditive valuation. We find an upper bound on the optimal subadditive valuations by computing a linear program whose constraints encode the arbitrage constraints. Since the number of constraints can be exponential in the number of hyperedges, we optimize by greedily adding constraints for bundles with largest valuations and finding a set of bundles that cover the hyperedge with small valuations. As we will see later, this helps us compare the performance of algorithms with respect to the subadditive bound that can be better than sum of valuations. In all our experiments, we report each data point as an average over $5$ runs where we discard the first run to minimize cache latency effects.
+We perform all our experiments on a $2.2$ GHz processor machine with $4$ cores and $16$ GB main memory running OS X $10.10.5$. We use \texttt{MySQL} as the underlying database for query processing and evaluation. Our implementation is written in \textsf{Python} on top of the \textsc{Qirana} query pricing system~\cite{deep2017qirana}. 
+\textsc{Qirana} generates a support set $\mS$ by randomly sampling "neighboring" databases of the
+underlying database $\db$, \ie databases from $\mI$ that differ from $\db$ only in a few places.
+The advantage of this strategy is that it is possible to succinctly represent the support set by 
+storing only the differences from $\db$, which is efficient in terms of storage.
+For every query bundle $\bQ$, \textsc{Qirana} computes the conflict set $\dagr{\mS}{\bQ,\db}$, which
+is the bundle (or hyperedge) that we use as input to the pricing algorithms.
+
+Table~\ref{table:experiments} shows the design space of the experimental evaluation. 
+Our experiments will be over the $\texttt{\bfseries world}$ dataset, 
+and two different types of query workloads. Each query workload will generate a 
+hypergraph; to assign valuations over the hyperedges, we use different generative random
+models, which we describe later in detail. We evaluate our algorithms for each instance that is
+generated in this fashion. 
+
+In order to compare how well our algorithms perform in terms of revenue, we use two upper 
+bounds: $(i)$ sum of valuations, and $(ii)$ an upper bound on the optimal subadditive valuation. We find an upper bound on the optimal subadditive valuations by computing a linear program whose constraints encode the arbitrage constraints. Since the number of constraints can be exponential in the number of hyperedges, we optimize by greedily adding constraints for bundles with largest valuations and finding a set of bundles that cover the hyperedge with small valuations. As we will see later, this helps us compare the performance of algorithms with respect to the subadditive bound, which can
+generally be much smaller than the sum of valuations. 
+In all our experiments, we report each data point as an average over $5$ runs, where we discard the first run to minimize cache latency effects. \paris{Is this for runtime only? Otherwise, what does it mean?}
 
 \begin{table*} \centering
 	\def\arraystretch{1.35}%
 	\begin{tabular}{c|c|c|c}
 		\toprule
-		\textbf{Dataset} & \textbf{Algorithms} & \textbf{Workload} & \textbf{Valuation Model}\\ \midrule
-		$\texttt{\bfseries world}$ dataset & \ubp & SQL query workload & Sampled Bundle Valuations \\ 
-		& \uip & Random workload & Scaled Bundle Valuations \\ 
-		& \lpip &  & Additive Bundle Valuations \\ 
+		\textbf{Dataset} & \textbf{Algorithms} & \textbf{Query Workload} & \textbf{Valuation Model}\\ \midrule
+		$\texttt{\bfseries world}$ dataset & \ubp & uniform & sampled bundle  \\ 
+		& \uip & skewed & scaled Bundle  \\ 
+		& \lpip &  & additive bundle  \\ 
 		& \cip & &  \\
-		& layering &  &  \\
+		& Layering &  &  \\
 		\bottomrule
 	\end{tabular}
 	\caption{Experimental Design Space}
@@ -26,44 +50,54 @@ Table~\ref{table:experiments} shows the experimental design space we consider. O
 \subsection{Workload and Dataset Characteristics}
 
 \begin{figure}[!h]
-	
-	\begin{minipage}[t]{0.49\linewidth}
-		\centering
-		\includegraphics[scale=0.35]{histogramhyperedgesizerandomworkload.pdf}
-		\caption{Random workload} \label{fig:histogramrandom}
-	\end{minipage}
-	\begin{minipage}[t]{0.47\linewidth} 
+	\begin{minipage}[t]{0.49\linewidth} 
 		\centering
 		\includegraphics[scale=0.35]{histogramsqlworkload.pdf}
-		\caption{SQL workload} \label{fig:histogramrealqueries}
-	\end{minipage}        
+		\caption{Skewed query workload} \label{fig:histogramrealqueries}
+	\end{minipage}       	
+	%
+	\begin{minipage}[t]{0.47\linewidth}
+		\centering
+		\includegraphics[scale=0.35]{histogramhyperedgesizerandomworkload.pdf}
+		\caption{Uniform query workload} \label{fig:histogramrandom}
+	\end{minipage} 
 \end{figure}  
 
 \begin{table*}[] \centering
 	%\ra{1.3}
 	\begin{small}
 		\begin{tabular}{@{}lrrr@{}}\toprule
-			\textbf{Workload} & \textbf{\# Queries} & \textbf{Maximum Item Degree} & \textbf{Average edge size} \\ \midrule
+			\textbf{Query Workload} & \textbf{\# Queries ($m$)} & \textbf{Maximum item degree ($B$)} & \textbf{Average edge size} \\ \midrule
+			\textbf{uniform} &  1000 & 400 & 5982.07   \\ \hdashline
+			\textbf{skewed} &  986 & 22 & 41.67    \\ 
 			
-			\textbf{SQL Queries} &  986 & 22 & 5982.07  \\ \hdashline
-			\textbf{Random Queries} &  1000 & 400 &  41.67  \\
 			\bottomrule
 		\end{tabular}
 	\end{small}
-	\caption{Workload Characteristics}
+	\caption{Hypergraph Characteristics}
 	\label{table:workload:characteristics}
 \end{table*}
 
-We will now describe briefly the characteristics of the workload and datasets used. The first dataset we use is the $\texttt{\bfseries world}$ dataset, a popular database provided for software developers. 
-It consists of $3$ relations: $\texttt{\bfseries Country}$,$\texttt{\bfseries CountryLanguage}$ and $\texttt{\bfseries City}$ which contain $5000$ tuples and $21$ attributes. We construct a support set of size $15000$ by randomly choosing neighboring databases. 
-The query workload consists of $986$ queries containing selection, projections and join queries with aggregations. We construct the workload by generating changing the predicates in queries. The full list queries in this dataset is present in the appendix.
+We now describe briefly the characteristics of the query workload and datasets. The dataset we use is the $\texttt{\bfseries world}$ dataset, a popular database provided for software developers. 
+It consists of $3$ tables, which contain $5000$ tuples and $21$ attributes. We construct a support set of size $n = |\mS| = 15000$.
 
-The second workload also uses $\texttt{\bfseries world}$ dataset but consists of randomly chosen selection and projection queries. To generate a random selection query, we  sample without replacement a subset of primary keys that will included in the query. Similarly, for projection queries, we choose a subset of attributes that will form the projection list of the query.
+We consider two different query workloads, which create two different hypergraphs that fundamentally differ in structure:
+%
+\begin{itemize}
+\item The {\em skewed} query workload consists of $m = 986$ SQL queries containing selection, projections and join queries with aggregation. The list of queries in this workload is presented in the appendix. 
+\paris{todo?}
+%
+\item The {\em uniform} query workload consists of only selection and projection SQL queries with the same selectivity (which means that the output of each query is about the same). 
+%To generate a random selection query, we  sample without replacement a subset of primary keys that will included in the query. Similarly, for projection queries, we randomly choose a subset of attributes that will form the projection list of the query.
+\end{itemize}
 
-Figure~\ref{fig:histogramrandom} and~\ref{fig:histogramrealqueries} depicts the distribution of the hyperedge size distribution for both the workloads. Throughout our experiments, unless specified otherwise, the hypergraphs remain fixed.
+Table~\ref{table:workload:characteristics} summarizes the characteristics of the two hypergraphs
+generated by each query workload. Both hypergraphs have the same number of vertices and
+hyperedges. On the other hand, their structure is very different, as can be seen in 
+Figures~\ref{fig:histogramrealqueries} and~\ref{fig:histogramrandom}, which depict the distribution of the hyperedge size. For the uniform query workload, the average size of each hyperedge is around 6000, and it is normally distributed around that value. This means that there is a high overlap among the vertices of the hyperedges. For the skewed query workload, most of the hyperedges contain only a very small number of vertices, while only a few hyperedges contain a large number of vertices. Observe also that the average hyperedge size is around 40, so the hypergraph is more sparse
+compared to the uniform query workload.
 
-
-\subsection{Experiment Results for SQL Workload}
+\subsection{Skewed Query Workload}
 
 Our first set of experiments is to understand how the approximation algorithms behave on real world queries. 
 
@@ -97,7 +131,7 @@ In this part of the experiment, we will sample valuations for the bundles from a
 	\caption{Sampling Item Prices: SQL workload and random workload} \label{fig:mixing}
 \end{figure}  
 
-\subsection{Experiment Results for Random Query Workload}
+\subsection{Uniform Query Workload}
 
 
 The second half of our experiments focuses on random query workload. For the following experiments, we generate $1000$ random queries and fix the resulting hypergraph. 
