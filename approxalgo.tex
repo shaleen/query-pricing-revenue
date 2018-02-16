@@ -76,9 +76,9 @@ the revenue $R_e$ that we can obtain if we set $w_j = q_e$ for every $j \in \mV$
 
 \paragraph{The LP Item Pricing (\lpip) Algorithm.}
 
-The second item pricing algorithm we consider builds upon the \uip\ algorithm to construct a non-uniform item pricing. \lpip\ constructs a separate linear program $LP(e)$ for every hyperedge $e \in \mE$ as follows. Let $F_e \subseteq \mE$ be the set of hyperedges $e'$ such that $v_{e'} \geq v_e$. Then, $LP(e)$ has the objective of maximizing the revenue,
+The second item pricing algorithm we consider builds upon the \uip\ algorithm to construct a non-uniform item pricing. \lpip\ constructs a separate linear program $LP(e)$ for every hyperedge $e \in \mE$ as follows. Let $F_e \subseteq \mE$ be the set of hyperedges $e'$ such that $q_{e'} \geq q_{e}$. Then, $LP(e)$ has the objective of maximizing the revenue,
 with the constraint that every edge in $F_e$ must be sold: in other words, for every $e' \in F_e$, we must have $\sum_{j \in e'} w_j \leq v_{e'}$. Observe that the uniform item pricing
-solution that sets each weight $w_j$ to $v_e$ is a feasible solution for $LP(e)$, so the output of the linear program can only give a better item pricing. \lpip\ outputs the revenue-maximizing solution across all $LP(e)$. The worst-case approximation guarantee of \lpip\ is also $O(\log m)$; however, as we will see in the experimental section, it often outperforms \uip.
+solution that sets each weight $w_j$ to $q_e$ is a feasible solution for $LP(e)$, so the output of the linear program can only give a better item pricing. \lpip\ outputs the revenue-maximizing solution across all $LP(e)$. The worst-case approximation guarantee of \lpip\ is also $O(\log n + \log m)$; however, as we will see in the experimental section, it often outperforms \uip.
 
 \paragraph{The Capacity Item Pricing (\cip) Algorithm.}
 This algorithm is an $O(\log B)$-approximation algorithm given by ~\cite{cheung2008approximation}.
