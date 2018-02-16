@@ -14,7 +14,7 @@ Adding up all inequalities, we get:
 	
 	\begin{equation*}
 	\begin{aligned}
-	\sum_{j=1}^m v_{e_j} \leq  \sum_{j=1}^m \frac{R_j}{m-j+1} \leq R \sum_{j=1}^m \frac{1}{j} = R \cdot O(\log m) 
+	\sum_{j=1}^m v_{e_j} \leq  \sum_{j=1}^m \frac{R_j}{m-j+1} \leq R \sum_{j=1}^m \frac{1}{j} = R \cdot O(\log m) .
 	\end{aligned}
 	\end{equation*}
 \end{proof}
@@ -167,7 +167,7 @@ The third equality holds since each $\bA_i$ and $\bB_i$ is either an empty set o
 & =  & v(A_1) + v(B_1) + \dots + v(A_{n/2^{u}}) + v(B_{n/2^{u}}) \\
 & \geq & v(A_1 \cap B_1) + \dots + v(A_{n/2^{u}} \cap B_{n/2^{u}}) + v(A_1 \cup B_1) + \dots + v(A_{n/2^{u}} \cup B_{n/2^{u}}) \\
 & = & v( (A^* \cap B^*) \cap L^{u}_1) + \dots + v( (A^* \cap B^*) \cap L^{u}_{n/2^{u}}) +  v( (A^* \cup B^*) \cap L^{u}_1) + \dots + v( (A^* \cup B^*) \cap L^{u}_{n/2^{u}}) \\
-&\geq &v(A^{*} \cup B^{*}) + v(A^{*} \cap B^{*})
+&\geq &v(A^{*} \cup B^{*}) + v(A^{*} \cap B^{*}).
 \end{eqnarray*}
 
 Here the third inequality is where we invoke the inductive hypothesis: if $v(A_i)=v(L_i^u)$ or $v(B_i)=v(L_i^u)$, then $v(A_i)+v(B_i)=v(A_i\cup B_i)+v(A_i\cap B_i)$. Otherwise, $v(A_i)$ and $v(B_i)$ are both defined by sets with size at most $2^{u-1}$, by inductive hypothesis $v(A_i)+v(B_i)\geq v(A_i\cup B_i)+v(A_i\cap B_i)$. Thus (\ref{eqnsubmodular}) always holds, which means $v$ is indeed a submodular function.
@@ -206,7 +206,7 @@ For optimal item pricing, let $k$ be the smallest depth for any set sold by an o
 \end{equation*}
 since each set in level $\ell$ has $c_\ell$ copies.
 
-In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\textsf{OPT}_{IP})$ is $\Omega(t)$. Note that $m = \sum_{i = 0}^{i = t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
+In conclusion the revenue gap between $\textsf{OPT}$ and $\max(\textsf{OPT}_B,\textsf{OPT}_{IP})$ is $\Omega(t)$. Note that $m = \sum_{i = 0}^{t} 3^{t} \cdot  2^{k} \cdot  \left( \frac{2}{3} \right)^{k} \leq 3^{t} \cdot  \left( \frac{4}{3} \right)^{t+1} = O(4^{t})$ and thus, the revenue gap is $\Omega(\log m)$. 
 
 
 \end{proof}
